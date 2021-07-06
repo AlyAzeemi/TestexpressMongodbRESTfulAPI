@@ -121,6 +121,6 @@ app.post("/api/logout", verifyToken, (req, res) => {
     res.clearCookie("accessToken", req.token), { httpOnly: true };
     res.redirect("../login");
   } catch (e) {
-    console.log(`This sword art online now bish. ${e}`);
+    console.log(`Error whilst logging out user: ${e}`);
   }
 });
