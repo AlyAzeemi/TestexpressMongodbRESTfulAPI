@@ -26,10 +26,11 @@ app.get("/login", verifyToken, (req, res) => {
     if (err) {
       res.sendFile(__dirname + "/static/login.html");
     } else {
+      //TODO
       /*
       var html = fs.readFileSync(__dirname + "/static/login.html", "utf8");
       var $ = cheerio.load(html);
-      var scriptNode = '<script>alert("script appended!");</script>';
+      var scriptNode = '<script>alert("Logout before performing this operation.");</script>';
       $("body").append(scriptNode);
       res.send($.html());
       */
@@ -65,10 +66,11 @@ app.get("/signup", verifyToken, (req, res) => {
     if (err) {
       res.sendFile(__dirname + "/static/signup.html");
     } else {
+      //TODO
       /*
       var html = fs.readFileSync(__dirname + "/static/signup.html", "utf8");
       var $ = cheerio.load(html);
-      var scriptNode = '<script>alert("script appended!");</script>';
+      var scriptNode = '<script>alert("Logout before performing this operation.");</script>';
       $("body").append(scriptNode);
       //res.send($.html());
       */
