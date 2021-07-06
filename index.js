@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
 
 //Login
 app.get("/login", verifyToken, (req, res) => {
-  if (req.var.isAuthenticated == false) {
+  if (req.headers.isAuthenticated == false) {
     res.sendFile(__dirname + "/static/login.html");
   } else {
     //TODO
@@ -62,7 +62,7 @@ app.post("/api/login", async (req, res) => {
 
 //Sign up
 app.get("/signup", verifyToken, (req, res) => {
-  if (req.var.isAuthenticated == false) {
+  if (req.headers.isAuthenticated == false) {
     res.sendFile(__dirname + "/static/signup.html");
   } else {
     //TODO
@@ -90,17 +90,17 @@ app.listen(PORT, () => {
 //Middleware: Verify Token
 function verifyToken(req, res, next) {
   const bearerHeader = req.headers["cookie"];
-  if (req.var == "undefined") {
-    req.var = { isAuthenticated: false };
+  if (req.headers.isAuthenticated == "undefined") {
+    req.headers.isAuthenticated = false;
   }
   if (typeof bearerHeader !== "undefined") {
     const bearer = bearerHeader.split("=")[1];
     req.token = bearer;
     jwt.verify(req.token, "secretkey", (err, authData) => {
       if (err) {
-        req.var.isAuthenticated = false;
+        req.headers.isAuthenticated = false;
       } else {
-        req.var.isAuthenticated = true;
+        req.headers.isAuthenticated = true;
       }
     });
   } else {
@@ -110,7 +110,7 @@ function verifyToken(req, res, next) {
 
 //userDashboard
 app.get("/dashboard", verifyToken, (req, res) => {
-  if (req.var.isAuthenticated == false) {
+  if (req.headers.isAuthenticated == false) {
     res.sendStatus(403);
   } else {
     res.sendFile(__dirname + "/static/dashboard.html");
