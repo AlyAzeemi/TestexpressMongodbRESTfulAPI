@@ -41,9 +41,8 @@ async function login(qEmail, qPassword) {
         callback({ success: true });
       }
     });*/
-
     if (result !== null) {
-      match = await result.comparePasswordAsync(qPassword);
+      const match = await result.comparePasswordAsync(qPassword);
       if (match) {
         return {
           message: "Login Successful!",
