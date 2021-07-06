@@ -89,7 +89,7 @@ app.listen(PORT, () => {
   console.log(`Up and running at http://localhost:${PORT}/`);
 });
 
-//Verify Token
+//Middleware: Verify Token
 function verifyToken(req, res, next) {
   const bearerHeader = req.headers["cookie"];
   if (typeof bearerHeader !== "undefined") {
