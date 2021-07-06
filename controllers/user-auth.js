@@ -41,13 +41,18 @@ async function login(qEmail, qPassword) {
         callback({ success: true });
       }
     });*/
+
     if (result !== null) {
-      await result.comparePasswordAsync(qPassword);
-      return {
-        message: "Login Successful!",
-        loginStatus: true,
-        userData: result,
-      };
+      match = await result.comparePasswordAsync(qPassword);
+      if (match) {
+        return {
+          message: "Login Successful!",
+          loginStatus: true,
+          userData: result,
+        };
+      } else {
+        throw `Incorrect password for ${result.email}`;
+      }
     } else {
       throw "Account doesn't exist in DB.";
     }
