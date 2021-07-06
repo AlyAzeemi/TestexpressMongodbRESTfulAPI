@@ -57,6 +57,8 @@ app.post("/api/login", async (req, res) => {
       });
     });
     res.redirect("../dashboard");
+  } else {
+    res.jsonp(apiResp);
   }
 });
 
@@ -81,7 +83,7 @@ app.get("/signup", verifyToken, (req, res) => {
 app.post("/api/signup", async (req, res) => {
   let user = req.body;
   apiResp = await userAuth.signup(user);
-  res.json(apiResp);
+  res.jsonp(apiResp);
 });
 
 //Run
