@@ -26,13 +26,13 @@ app.get("/login", verifyToken, (req, res) => {
     if (err) {
       res.sendFile(__dirname + "/static/login.html");
     } else {
+      /*
       var html = fs.readFileSync(__dirname + "/static/login.html", "utf8");
       var $ = cheerio.load(html);
       var scriptNode = '<script>alert("script appended!");</script>';
       $("body").append(scriptNode);
-      dump = $.html();
-      console.log(dump);
-      //res.send($.html());
+      res.send($.html());
+      */
       res.redirect("../dashboard");
     }
   });
@@ -65,13 +65,13 @@ app.get("/signup", verifyToken, (req, res) => {
     if (err) {
       res.sendFile(__dirname + "/static/signup.html");
     } else {
+      /*
       var html = fs.readFileSync(__dirname + "/static/signup.html", "utf8");
       var $ = cheerio.load(html);
       var scriptNode = '<script>alert("script appended!");</script>';
       $("body").append(scriptNode);
-      dump = $.html();
-      console.log(dump);
       //res.send($.html());
+      */
       res.redirect("../dashboard");
     }
   });
