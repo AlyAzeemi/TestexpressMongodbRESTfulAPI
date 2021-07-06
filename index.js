@@ -22,21 +22,19 @@ app.get("/", (req, res) => {
 
 //Login
 app.get("/login", verifyToken, (req, res) => {
-  jwt.verify(req.token, "secretkey", (err, authData) => {
-    if (err) {
-      res.sendFile(__dirname + "/static/login.html");
-    } else {
-      //TODO
-      /*
+  if (req.var.isAuthenticated == false) {
+    res.sendFile(__dirname + "/static/login.html");
+  } else {
+    //TODO
+    /*
       var html = fs.readFileSync(__dirname + "/static/login.html", "utf8");
       var $ = cheerio.load(html);
       var scriptNode = '<script>alert("Logout before performing this operation.");</script>';
       $("body").append(scriptNode);
       res.send($.html());
       */
-      res.redirect("../dashboard");
-    }
-  });
+    res.redirect("../dashboard");
+  }
 });
 app.post("/api/login", async (req, res) => {
   apiResp = await userAuth.login(req.body.email, req.body.password);
@@ -64,21 +62,19 @@ app.post("/api/login", async (req, res) => {
 
 //Sign up
 app.get("/signup", verifyToken, (req, res) => {
-  jwt.verify(req.token, "secretkey", (err, authData) => {
-    if (err) {
-      res.sendFile(__dirname + "/static/signup.html");
-    } else {
-      //TODO
-      /*
+  if (req.var.isAuthenticated == false) {
+    res.sendFile(__dirname + "/static/signup.html");
+  } else {
+    //TODO
+    /*
       var html = fs.readFileSync(__dirname + "/static/signup.html", "utf8");
       var $ = cheerio.load(html);
       var scriptNode = '<script>alert("Logout before performing this operation.");</script>';
       $("body").append(scriptNode);
       //res.send($.html());
       */
-      res.redirect("../dashboard");
-    }
-  });
+    res.redirect("../dashboard");
+  }
 });
 app.post("/api/signup", async (req, res) => {
   let user = req.body;
@@ -94,11 +90,19 @@ app.listen(PORT, () => {
 //Middleware: Verify Token
 function verifyToken(req, res, next) {
   const bearerHeader = req.headers["cookie"];
+  if (req.var == "undefined") {
+    req.var = { isAuthenticated: false };
+  }
   if (typeof bearerHeader !== "undefined") {
     const bearer = bearerHeader.split("=")[1];
-    console.log("req.token: " + req.token);
     req.token = bearer;
-    next();
+    jwt.verify(req.token, "secretkey", (err, authData) => {
+      if (err) {
+        req.var.isAuthenticated = false;
+      } else {
+        req.var.isAuthenticated = true;
+      }
+    });
   } else {
     next();
   }
@@ -106,13 +110,11 @@ function verifyToken(req, res, next) {
 
 //userDashboard
 app.get("/dashboard", verifyToken, (req, res) => {
-  jwt.verify(req.token, "secretkey", (err, authData) => {
-    if (err) {
-      res.sendStatus(403);
-    } else {
-      res.sendFile(__dirname + "/static/dashboard.html");
-    }
-  });
+  if (req.var.isAuthenticated == false) {
+    res.sendStatus(403);
+  } else {
+    res.sendFile(__dirname + "/static/dashboard.html");
+  }
 });
 
 //Logout
