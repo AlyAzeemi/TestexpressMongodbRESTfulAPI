@@ -38,6 +38,8 @@ async function checkIfJWTExists(token) {
 }
 
 async function signUp(data) {
-  var user = new userSchema(data);
-  user.save();
+  try {
+    var user = new userSchema(data);
+    user.save();
+  } catch (e) {}
 }
