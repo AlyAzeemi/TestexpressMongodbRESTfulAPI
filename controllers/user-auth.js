@@ -31,16 +31,6 @@ async function login(qEmail, qPassword) {
     const result = await userSchema.findOne({
       email: qEmail,
     });
-    /*
-    result.comparePassword(qPassword, function (matchError, isMatch) {
-      if (matchError) {
-        callback({ error: true });
-      } else if (!isMatch) {
-        callback({ error: true });
-      } else {
-        callback({ success: true });
-      }
-    });*/
     if (result !== null) {
       const match = await result.comparePasswordAsync(qPassword);
       if (match) {
