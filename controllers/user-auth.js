@@ -39,10 +39,7 @@ async function signup(req, res) {
     );
   } catch (e) {
     console.log(`Error creating user: ${e}`);
-    return {
-      message: "An account affiliated with that email already exists.",
-      signupStatus: false,
-    };
+    errorResponseWithOnlyMessage(res, e);
   }
 }
 async function login(req, res) {
@@ -88,5 +85,3 @@ async function test() {
 
   await login();
 }
-
-module.exports = { login, signup };

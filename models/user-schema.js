@@ -15,17 +15,6 @@ const userSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-userSchema.pre("save", async function (next) {
-  try {
-    let salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(this.password, salt);
-    this.password = hashedPassword;
-    next();
-  } catch (e) {
-    next(e);
-  }
-});
-
 userSchema.methods.comparePasswordAsync = async function (qPassword) {
   r = await bcrypt.compareSync(qPassword, this.password);
   return r;

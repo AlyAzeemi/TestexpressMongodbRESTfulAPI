@@ -20,8 +20,7 @@ async function login(qEmail, hashedPassword) {
       //Login and sign JWT
       const JWToken = await jwt.sign(user, "secretkey", { expiresIn: "1d" });
       user.JWToken = JWToken;
-      //TODO: Change save method
-      //user.save();
+      user.save();
       return messages.auth.login.success;
     }
   } catch (e) {
