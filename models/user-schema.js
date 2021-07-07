@@ -10,6 +10,7 @@ const userSchema = mongoose.Schema(
     username: reqString,
     password: reqString,
     age: optInt,
+    JWToken: String,
   },
   { timestamps: true }
 );
@@ -25,28 +26,9 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-userSchema.methods.comparePassword = function (password, callback) {
-  bcrypt.compare(password, this.password, function (error, isMatch) {
-    if (error) {
-      return callback(error);
-    } else {
-      callback(null, isMatch);
-    }
-  });
-};
-
-userSchema.methods.comparePasswordAsync = function (param1) {
-  let password = this.password;
-  return new Promise(function (resolve, reject) {
-    bcrypt.compare(param1, password, function (err, res) {
-      if (err) {
-        console.log(err);
-        reject(err);
-      } else {
-        resolve(res);
-      }
-    });
-  });
+userSchema.methods.comparePasswordAsync = async function (qPassword) {
+  r = await bcrypt.compareSync(qPassword, this.password);
+  return r;
 };
 
 module.exports = mongoose.model("users", userSchema);
