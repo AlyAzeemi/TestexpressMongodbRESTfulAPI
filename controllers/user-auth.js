@@ -80,8 +80,16 @@ async function login(req, res) {
   }
 }
 
+async function logout(req, res) {
+  try {
+    res.clearCookie("accessToken", req.token), { httpOnly: true };
+    res.redirect("../login");
+  } catch (e) {
+    console.log(`Error whilst logging out user: ${e}`);
+  }
+}
+
 async function test() {
   await signup();
-
   await login();
 }
