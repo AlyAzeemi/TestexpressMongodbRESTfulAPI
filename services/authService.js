@@ -17,6 +17,7 @@ async function login(qEmail, hashedPassword) {
     if (!passMatch) {
       return messages.auth.login.incorrect_password;
     } else {
+      //TODO: Figure out how this works
       //Login and sign JWT
       const JWToken = await jwt.sign(user, "secretkey", { expiresIn: "1d" });
       user.JWToken = JWToken;
@@ -49,4 +50,8 @@ async function signUp(data) {
   }
 }
 
+async function logout(data) {
+  try {
+  } catch (e) {}
+}
 module.exports = { login, signUp, checkIfJWTExists };

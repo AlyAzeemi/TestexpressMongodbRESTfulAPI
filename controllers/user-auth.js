@@ -81,6 +81,7 @@ async function login(req, res) {
 }
 
 async function logout(req, res) {
+  //TODO: figure out how to make this work
   try {
     res.clearCookie("accessToken", req.token), { httpOnly: true };
     res.redirect("../login");
@@ -93,3 +94,5 @@ async function test() {
   await signup();
   await login();
 }
+
+module.exports = { signup, login, logout };

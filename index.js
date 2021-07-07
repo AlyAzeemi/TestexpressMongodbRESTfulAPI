@@ -5,7 +5,7 @@ const userAuth = require("./controllers/user-auth.js");
 const { response } = require("express");
 const fs = require("fs");
 const cheerio = require("cheerio");
-
+const routes = require("./routes/routes");
 const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(morgan("dev"));
@@ -19,6 +19,9 @@ userAuth.connectToMongoDB().then(() => {
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/static/index.html");
 });
+
+//API
+app.post("/api/", routes);
 
 //Login
 app.get("/login", verifyToken, (req, res) => {
@@ -38,29 +41,6 @@ app.get("/login", verifyToken, (req, res) => {
     }
   });
 });
-app.post("/api/login", async (req, res) => {
-  apiResp = await userAuth.login(req.body.email, req.body.password);
-  if (apiResp.loginStatus) {
-    await new Promise(function (resolve, reject) {
-      jwt.sign({ user: apiResp.userData }, "secretkey", (err, token) => {
-        if (err) {
-          console.log(err);
-          reject(err);
-        } else {
-          console.log(token);
-          res.cookie("accessToken", token, {
-            expires: new Date(Date.now() + 900000),
-            httpOnly: true,
-          });
-          resolve(token);
-        }
-      });
-    });
-    res.redirect("../dashboard");
-  } else {
-    res.jsonp(apiResp);
-  }
-});
 
 //Sign up
 app.get("/signup", verifyToken, (req, res) => {
@@ -79,11 +59,6 @@ app.get("/signup", verifyToken, (req, res) => {
       res.redirect("../dashboard");
     }
   });
-});
-app.post("/api/signup", async (req, res) => {
-  let user = req.body;
-  apiResp = await userAuth.signup(user);
-  res.jsonp(apiResp);
 });
 
 //Run
@@ -113,14 +88,4 @@ app.get("/dashboard", verifyToken, (req, res) => {
       res.sendFile(__dirname + "/static/dashboard.html");
     }
   });
-});
-
-//Logout
-app.post("/api/logout", verifyToken, (req, res) => {
-  try {
-    res.clearCookie("accessToken", req.token), { httpOnly: true };
-    res.redirect("../login");
-  } catch (e) {
-    console.log(`Error whilst logging out user: ${e}`);
-  }
 });
