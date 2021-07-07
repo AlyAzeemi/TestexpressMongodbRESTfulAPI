@@ -2,21 +2,41 @@ const mongoose = require("mongoose");
 const { mongoPass } = require("../secrets.json");
 const mongoPath = `mongodb+srv://aly:${mongoPass}@cluster0.fwdpv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const userSchema = require("../models/user-schema");
+const authService = require("../services/authService");
+const bcrypt = require("bcrypt");
+const { response } = require("express");
+const messages = require("../localization/messages");
+const {
+  sendResponseWithDataAndMessage,
+  errorResponseWithOnlyMessage,
+  sendResponseOnlyWithMessage,
+} = require("../methods/response");
 
-async function connectToMongoDB() {
+async function signup(req, res) {
   try {
-    await mongoose.connect(mongoPath, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-  } catch (e) {
-    console.log(`Error connecting to database: ${e}`);
-  }
-}
-async function signup(user) {
-  try {
-    await userSchema(user).save();
-    return { message: "Account created successfully!", signupStatus: true };
+    //Get form data
+    let userFormData = {
+      email: req.body.email,
+      username: req.body.username,
+      password: req.body.password,
+      age: req.body.age,
+    };
+
+    //Hash password
+    let salt = await bcrypt.genSalt(10);
+    userFormData.password = await bcrypt.hash(this.password, salt);
+
+    //Signup
+    const response = await authService.signUp(userFormData);
+    if (response == messages.auth.signup.already_registered) {
+      return errorResponseWithOnlyMessage(res, response);
+    }
+    return sendResponseOnlyWithMessage(
+      res,
+      true,
+      messages.auth.signup.success,
+      200
+    );
   } catch (e) {
     console.log(`Error creating user: ${e}`);
     return {
@@ -25,40 +45,48 @@ async function signup(user) {
     };
   }
 }
-async function login(qEmail, qPassword) {
+async function login(req, res) {
   try {
+    //Get args
+    const qEmail = req.body.email;
+    const qPassword = req.body.password;
     console.log(qEmail, qPassword);
-    const result = await userSchema.findOne({
-      email: qEmail,
-    });
-    if (result !== null) {
-      const match = await result.comparePasswordAsync(qPassword);
-      if (match) {
-        return {
-          message: "Login Successful!",
-          loginStatus: true,
-          userData: result,
-        };
-      } else {
-        throw `Incorrect password for ${result.email}`;
-      }
+
+    //Hash password
+    let salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(qPassword, salt);
+
+    //Process args
+    response = await authService.login(qEmail, hashedPassword);
+    //If email not found
+    if (response == messages.auth.login.user_not_found) {
+      return errorResponseWithOnlyMessage(
+        res,
+        messages.auth.login.user_not_found
+      );
+    } //If email found but password doesn't match
+    else if (response == messages.auth.login.incorrect_password) {
+      return errorResponseWithOnlyMessage(
+        res,
+        messages.auth.login.incorrect_password
+      );
+    } //If everything checks out
+    else if (response == messages.auth.login.success) {
+      sendResponseOnlyWithMessage(res, messages.auth.login.success, 200);
+      return res.redirect("../dashboard");
     } else {
-      throw "Account doesn't exist in DB.";
+      throw e;
     }
   } catch (e) {
     console.log(`Error logging in: ${e}`);
-    return {
-      message: "Either password or email is incorrect.",
-      loginStatus: false,
-    };
+    errorResponseWithOnlyMessage(res, e);
   }
 }
 
 async function test() {
-  await connectToMongoDB();
   await signup();
 
   await login();
 }
 
-module.exports = { connectToMongoDB, login, signup };
+module.exports = { login, signup };

@@ -3,16 +3,17 @@ const userSchema = require("../models/user-schema");
 const messages = require("../localization/messages");
 const jwt = require("jsonwebtoken");
 
-async function login(qEmail, qPassword) {
+async function login(qEmail, hashedPassword) {
   try {
     const user = await userSchema.findOne({ email: qEmail });
+
     //If account doesn't exist
     if (user == null) {
       return messages.auth.login.user_not_found;
     }
+
     //Check password
-    const passMatch = await user.comparePasswordAsync(qPassword);
-    //If pass incorrect
+    const passMatch = await user.comparePasswordAsync(hashedPassword);
     if (!passMatch) {
       return messages.auth.login.incorrect_password;
     } else {
@@ -21,6 +22,7 @@ async function login(qEmail, qPassword) {
       user.JWToken = JWToken;
       //TODO: Change save method
       //user.save();
+      return messages.auth.login.success;
     }
   } catch (e) {
     throw e;
@@ -40,6 +42,12 @@ async function checkIfJWTExists(token) {
 async function signUp(data) {
   try {
     var user = new userSchema(data);
-    user.save();
-  } catch (e) {}
+    res = await user.save();
+    return res;
+  } catch (e) {
+    console.log(`Error registering user:${e}`);
+    throw e;
+  }
 }
+
+module.exports = { login, signUp, checkIfJWTExists };
