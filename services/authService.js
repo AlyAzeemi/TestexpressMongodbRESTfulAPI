@@ -1,4 +1,3 @@
-const { login } = require("../controllers/user-auth");
 const userSchema = require("../models/user-schema");
 const messages = require("../localization/messages");
 const jwt = require("jsonwebtoken");
@@ -50,8 +49,11 @@ async function signUp(data) {
   }
 }
 
-async function logout(data) {
+async function logout(token) {
   try {
+    var user = await new userSchema.findOne({ JWToken: token });
+    user.JWToken = "";
+    await user.save();
   } catch (e) {}
 }
 module.exports = { login, signUp, checkIfJWTExists };

@@ -1,10 +1,5 @@
-const mongoose = require("mongoose");
-const { mongoPass } = require("../secrets.json");
-const mongoPath = `mongodb+srv://aly:${mongoPass}@cluster0.fwdpv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
-const userSchema = require("../models/user-schema");
 const authService = require("../services/authService");
 const bcrypt = require("bcrypt");
-const { response } = require("express");
 const messages = require("../localization/messages");
 const {
   sendResponseWithDataAndMessage,
@@ -12,9 +7,8 @@ const {
   sendResponseOnlyWithMessage,
 } = require("../methods/response");
 
-async function signup(req, res) {
+signup = async (req, res) => {
   try {
-    //Get form data
     let userFormData = {
       email: req.body.email,
       username: req.body.username,
@@ -24,7 +18,7 @@ async function signup(req, res) {
 
     //Hash password
     let salt = await bcrypt.genSalt(10);
-    userFormData.password = await bcrypt.hash(this.password, salt);
+    userFormData.password = await bcrypt.hash(userFormData.password, salt);
 
     //Signup
     const response = await authService.signUp(userFormData);
@@ -41,8 +35,8 @@ async function signup(req, res) {
     console.log(`Error creating user: ${e}`);
     errorResponseWithOnlyMessage(res, e);
   }
-}
-async function login(req, res) {
+};
+login = async (req, res) => {
   try {
     //Get args
     const qEmail = req.body.email;
@@ -52,9 +46,10 @@ async function login(req, res) {
     //Hash password
     let salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(qPassword, salt);
-
+    console.log(hashedPassword, qPassword);
     //Process args
-    response = await authService.login(qEmail, hashedPassword);
+    const response = await authService.login(qEmail, hashedPassword);
+
     //If email not found
     if (response == messages.auth.login.user_not_found) {
       return errorResponseWithOnlyMessage(
@@ -63,10 +58,7 @@ async function login(req, res) {
       );
     } //If email found but password doesn't match
     else if (response == messages.auth.login.incorrect_password) {
-      return errorResponseWithOnlyMessage(
-        res,
-        messages.auth.login.incorrect_password
-      );
+      errorResponseWithOnlyMessage(res, messages.auth.login.incorrect_password);
     } //If everything checks out
     else if (response == messages.auth.login.success) {
       sendResponseOnlyWithMessage(res, messages.auth.login.success, 200);
@@ -78,9 +70,9 @@ async function login(req, res) {
     console.log(`Error logging in: ${e}`);
     errorResponseWithOnlyMessage(res, e);
   }
-}
+};
 
-async function logout(req, res) {
+logout = async (req, res) => {
   //TODO: figure out how to make this work
   try {
     res.clearCookie("accessToken", req.token), { httpOnly: true };
@@ -88,11 +80,11 @@ async function logout(req, res) {
   } catch (e) {
     console.log(`Error whilst logging out user: ${e}`);
   }
-}
+};
 
 async function test() {
   await signup();
   await login();
 }
 
-module.exports = { signup, login, logout };
+module.exports = { login, signup, logout };

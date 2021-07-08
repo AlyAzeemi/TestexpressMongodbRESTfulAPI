@@ -15,8 +15,9 @@ const userSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-userSchema.methods.comparePasswordAsync = async function (qPassword) {
-  r = await bcrypt.compareSync(qPassword, this.password);
+userSchema.methods.comparePasswordAsync = async function (hashedPassword) {
+  r = bcrypt.compareSync(hashedPassword, this.password);
+  console.log(this.password, "\n", hashedPassword);
   return r;
 };
 
