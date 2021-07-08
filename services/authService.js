@@ -49,7 +49,7 @@ async function signUp(data) {
   try {
     var user = new userSchema(data);
     res = await userSchema.findOne({ email: user.email });
-    if (user !== null) {
+    if (res !== null) {
       return messages.auth.signup.already_registered;
     }
     await user.save();

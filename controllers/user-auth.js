@@ -68,12 +68,12 @@ login = async (req, res) => {
     } //If everything checks out
     else if (response == messages.auth.login.success) {
       success = true;
-      /*sendResponseOnlyWithMessage(
+      sendResponseOnlyWithMessage(
         res,
         success,
         messages.auth.login.success,
         200
-      );*/
+      );
       return res.redirect("../dashboard");
     } else {
       throw e;
