@@ -20,7 +20,6 @@ function ensureWebToken(req, res, next) {
       req.token = x_access_token;
       verifyJWT(req, res, next);
     } else {
-      console.log(req.originalUrl);
       res.sendStatus(403);
     }
   } catch (e) {
@@ -28,4 +27,17 @@ function ensureWebToken(req, res, next) {
   }
 }
 
-module.exports = { ensureWebToken };
+function ensureNoWebToken(req, res, next) {
+  try {
+    const x_access_token = req.headers["cookie"].split("=")[1];
+    if (typeof x_access_token !== "undefined") {
+      res.redirect("dashboard");
+    } else {
+      next();
+    }
+  } catch (e) {
+    console.log(e);
+    res.send("Internal Server Error");
+  }
+}
+module.exports = { ensureWebToken, ensureNoWebToken };

@@ -73,7 +73,6 @@ login = async (req, res) => {
         messages.auth.login.success,
         200
       );*/
-      console.log(response);
       res.cookie("JWT", response.JWToken, {
         expiresIn: new Date(Date.now() + 60 * 15 * 1000),
       });

@@ -1,9 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
-const fs = require("fs");
-const cheerio = require("cheerio");
 const { apiRoutes } = require("./routes/api-routes");
-const { ensureWebToken } = require("./middleware/verifyJWT");
+const { ensureWebToken, ensureNoWebToken } = require("./middleware/verifyJWT");
 const path = require("path");
 const helmet = require("helmet");
 
@@ -24,31 +22,12 @@ app.get("/", (req, res) => {
 });
 
 //Login
-app.get("/login", (req, res) => {
+app.get("/login", ensureNoWebToken, (req, res) => {
   res.sendFile(path.join(__dirname, "static", "login.html"));
-
-  /*
-  jwt.verify(req.token, "secretkey", (err, authData) => {
-    if (err) {
-      res.sendFile(__dirname + "/static/login.html");
-    } else {
-      //TODO
-      
-      var html = fs.readFileSync(__dirname + "/static/login.html", "utf8");
-      var $ = cheerio.load(html);
-      var scriptNode = '<script>alert("Logout before performing this operation.");</script>';
-      $("body").append(scriptNode);
-      res.send($.html());
-     
-      res.redirect("../dashboard");
-    }
-     
-  });
-*/
 });
 
 //Sign up
-app.get("/signup", (req, res) => {
+app.get("/signup", ensureNoWebToken, (req, res) => {
   res.sendFile(path.join(__dirname, "static", "signup.html"));
 });
 
