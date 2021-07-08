@@ -5,7 +5,10 @@ const userAuth = require("./controllers/user-auth.js");
 const { response } = require("express");
 const fs = require("fs");
 const cheerio = require("cheerio");
-const routes = require("./routes/routes");
+const postRoutes = require("./routes/post-routes");
+const { ensureWebToken } = require("../middleware/verifyJWT");
+const path = require("path");
+
 const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(morgan("dev"));
@@ -21,63 +24,36 @@ app.get("/", (req, res) => {
 });
 
 //API
-app.post("/api/", routes);
+app.post("/api/", postRoutes);
 
 //Login
 app.get("/login", verifyToken, (req, res) => {
+  res.sendFile(path(__dirname, "static/login.html"));
+
+  /*
   jwt.verify(req.token, "secretkey", (err, authData) => {
     if (err) {
       res.sendFile(__dirname + "/static/login.html");
     } else {
       //TODO
-      /*
+      
       var html = fs.readFileSync(__dirname + "/static/login.html", "utf8");
       var $ = cheerio.load(html);
       var scriptNode = '<script>alert("Logout before performing this operation.");</script>';
       $("body").append(scriptNode);
       res.send($.html());
-      */
+     
       res.redirect("../dashboard");
     }
+     
   });
+*/
 });
 
 //Sign up
-app.get("/signup", verifyToken, (req, res) => {
-  jwt.verify(req.token, "secretkey", (err, authData) => {
-    if (err) {
-      res.sendFile(__dirname + "/static/signup.html");
-    } else {
-      //TODO
-      /*
-      var html = fs.readFileSync(__dirname + "/static/signup.html", "utf8");
-      var $ = cheerio.load(html);
-      var scriptNode = '<script>alert("Logout before performing this operation.");</script>';
-      $("body").append(scriptNode);
-      //res.send($.html());
-      */
-      res.redirect("../dashboard");
-    }
-  });
+app.get("/signup", ensureWebToken, (req, res) => {
+  res.sendFile(path(__dirname + "/static/signup.html"));
 });
-
-//Run
-app.listen(PORT, () => {
-  console.log(`Up and running at http://localhost:${PORT}/`);
-});
-
-//Middleware: Verify Token
-function verifyToken(req, res, next) {
-  const bearerHeader = req.headers["cookie"];
-  if (typeof bearerHeader !== "undefined") {
-    const bearer = bearerHeader.split("=")[1];
-    console.log("req.token: " + req.token);
-    req.token = bearer;
-    next();
-  } else {
-    next();
-  }
-}
 
 //userDashboard
 app.get("/dashboard", verifyToken, (req, res) => {
@@ -88,4 +64,9 @@ app.get("/dashboard", verifyToken, (req, res) => {
       res.sendFile(__dirname + "/static/dashboard.html");
     }
   });
+});
+
+//Run
+app.listen(PORT, () => {
+  console.log(`Up and running at http://localhost:${PORT}/`);
 });
