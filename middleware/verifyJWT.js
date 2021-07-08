@@ -20,6 +20,7 @@ function ensureWebToken(req, res, next) {
       req.token = x_access_token;
       verifyJWT(req, res, next);
     } else {
+      console.log(req.originalUrl);
       res.sendStatus(403);
     }
   } catch (e) {
