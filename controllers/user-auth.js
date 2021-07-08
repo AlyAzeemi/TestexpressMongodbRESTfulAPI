@@ -73,6 +73,7 @@ login = async (req, res) => {
         messages.auth.login.success,
         200
       );*/
+      console.log(response);
       res.cookie("JWT", response.JWToken, {
         expiresIn: new Date(Date.now() + 60 * 15 * 1000),
       });
@@ -89,7 +90,7 @@ login = async (req, res) => {
 logout = async (req, res) => {
   //TODO: figure out how to make this work
   try {
-    res.clearCookie("accessToken", req.token), { httpOnly: true };
+    res.clearCookie("JWT", req.token), { httpOnly: true };
     res.redirect("../login");
   } catch (e) {
     console.log(`Error whilst logging out user: ${e}`);

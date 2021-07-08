@@ -13,14 +13,17 @@ function verifyJWT(req, res, next) {
 }
 
 function ensureWebToken(req, res, next) {
-  console.log(req.headers["cookies"]);
-  const x_access_token = req.headers["cookies"].split("=")[1];
-  console.log(x_access_token);
-  if (typeof x_access_token !== undefined) {
-    req.token = x_access_token;
-    verifyJWT(req, res, next);
-  } else {
-    res.sendStatus(403);
+  try {
+    const x_access_token = req.headers["cookie"].split("=")[1];
+    console.log(x_access_token);
+    if (typeof x_access_token !== "undefined") {
+      req.token = x_access_token;
+      verifyJWT(req, res, next);
+    } else {
+      res.sendStatus(403);
+    }
+  } catch (e) {
+    console.log(`Something terrible has happened: ${e}`);
   }
 }
 
