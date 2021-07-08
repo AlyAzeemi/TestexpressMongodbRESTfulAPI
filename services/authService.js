@@ -2,7 +2,7 @@ const userSchema = require("../models/user-schema");
 const { messages } = require("../localization/messages");
 const jwt = require("jsonwebtoken");
 
-async function login(qEmail, hashedPassword) {
+async function login(qEmail, qPassword) {
   try {
     const user = await userSchema.findOne({ email: qEmail });
 
@@ -12,13 +12,20 @@ async function login(qEmail, hashedPassword) {
     }
 
     //Check password
-    const passMatch = await user.comparePasswordAsync(hashedPassword);
+    console.log(user.password);
+    console.log(qPassword);
+
+    const passMatch = await user.comparePasswordAsync(qPassword);
     if (!passMatch) {
       return messages.auth.login.incorrect_password;
     } else {
       //TODO: Figure out how this works
       //Login and sign JWT
-      const JWToken = await jwt.sign(user, "secretkey", { expiresIn: "1d" });
+      const JWToken = await jwt.sign(
+        { _id: user._id, email: user.email },
+        "secretkey",
+        { expiresIn: "1d" }
+      );
       user.JWToken = JWToken;
       user.save();
       return messages.auth.login.success;

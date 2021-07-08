@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-function verifyToken(req, res, next) {
+function verifyJWT(req, res, next) {
   jwt.verify(req.token, "secretkey", async function (err, data) {
     if (err) {
       res.sendStatus(403);

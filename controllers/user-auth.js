@@ -46,14 +46,15 @@ login = async (req, res) => {
     //Get args
     const qEmail = req.body.email;
     const qPassword = req.body.password;
+    let success = false;
     console.log(qEmail, qPassword);
 
-    //Hash password
+    /*Hash password
     let salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(qPassword, salt);
-    console.log(hashedPassword, qPassword);
+    const hashedPassword = await bcrypt.hash(qPassword, salt);*/
+
     //Process args
-    const response = await authService.login(qEmail, hashedPassword);
+    const response = await authService.login(qEmail, qPassword);
 
     //If email not found
     if (response == messages.auth.login.user_not_found) {
@@ -66,7 +67,13 @@ login = async (req, res) => {
       errorResponseWithOnlyMessage(res, messages.auth.login.incorrect_password);
     } //If everything checks out
     else if (response == messages.auth.login.success) {
-      sendResponseOnlyWithMessage(res, messages.auth.login.success, 200);
+      success = true;
+      /*sendResponseOnlyWithMessage(
+        res,
+        success,
+        messages.auth.login.success,
+        200
+      );*/
       return res.redirect("../dashboard");
     } else {
       throw e;
