@@ -24,10 +24,9 @@ signup = async (req, res) => {
     const response = await authService.signUp(userFormData);
     console.log(response);
     if (response == messages.auth.signup.already_registered) {
-      console.log("f1");
       return errorResponseWithOnlyMessage(res, response);
     }
-    console.log("f2");
+
     return sendResponseOnlyWithMessage(
       res,
       true,
@@ -35,7 +34,6 @@ signup = async (req, res) => {
       200
     );
   } catch (e) {
-    console.log("f3");
     console.log(`Error creating user: ${e}`);
     errorResponseWithOnlyMessage(res, e);
   }
@@ -68,12 +66,13 @@ login = async (req, res) => {
     } //If everything checks out
     else if (response == messages.auth.login.success) {
       success = true;
+      /*
       sendResponseOnlyWithMessage(
         res,
         success,
         messages.auth.login.success,
         200
-      );
+      );*/
       return res.redirect("../dashboard");
     } else {
       throw e;
