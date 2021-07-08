@@ -64,7 +64,7 @@ login = async (req, res) => {
     else if (response == messages.auth.login.incorrect_password) {
       errorResponseWithOnlyMessage(res, messages.auth.login.incorrect_password);
     } //If everything checks out
-    else if (response == messages.auth.login.success) {
+    else if (response.message == messages.auth.login.success) {
       success = true;
       /*
       sendResponseOnlyWithMessage(
@@ -73,6 +73,9 @@ login = async (req, res) => {
         messages.auth.login.success,
         200
       );*/
+      res.cookie("JWT", response.JWToken, {
+        expiresIn: new Date(Date.now() + 60 * 15 * 1000),
+      });
       return res.redirect("../dashboard");
     } else {
       throw e;

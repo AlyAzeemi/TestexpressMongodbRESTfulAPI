@@ -7,16 +7,13 @@ function verifyJWT(req, res, next) {
     } else {
       const _data = await jwt.decode(req.token, { complete: true, json: true });
       req.user = _data["payload"];
-      res.cookie("JWT", req.token, {
-        expiresIn: new Date(Date.now() + 60 * 15 * 1000),
-      });
     }
     next();
   });
 }
 
 function ensureWebToken(req, res, next) {
-  console.log("f1");
+  console.log(req.headers["cookies"]);
   const x_access_token = req.headers["cookies"].split("=")[1];
   console.log(x_access_token);
   if (typeof x_access_token !== undefined) {

@@ -28,7 +28,7 @@ async function login(qEmail, qPassword) {
       );
       user.JWToken = JWToken;
       user.save();
-      return messages.auth.login.success;
+      return { message: messages.auth.login.success, JWToken: JWToken };
     }
   } catch (e) {
     throw e;
