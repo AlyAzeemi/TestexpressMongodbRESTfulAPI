@@ -19,8 +19,8 @@ const errorResponse = (res, message, code) => {
 };
 
 const errorResponseWithOnlyMessage = (res, e) => {
-  if (!isEmpty(e.message) && e !== undefined) {
-    return res.status(401).send({ success: false, message: e.message });
+  if (!isEmpty(e) && e !== undefined) {
+    return res.status(401).send({ success: false, message: e });
   } else {
     return res
       .status(500)

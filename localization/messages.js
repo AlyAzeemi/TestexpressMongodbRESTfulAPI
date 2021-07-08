@@ -1,4 +1,4 @@
-module.exports = {
+messages = {
   auth: {
     signup: {
       already_registered:
@@ -12,3 +12,4 @@ module.exports = {
     },
   },
 };
+module.exports = { messages };

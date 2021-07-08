@@ -1,5 +1,5 @@
 const userSchema = require("../models/user-schema");
-const messages = require("../localization/messages");
+const { messages } = require("../localization/messages");
 const jwt = require("jsonwebtoken");
 
 async function login(qEmail, hashedPassword) {
@@ -41,8 +41,13 @@ async function checkIfJWTExists(token) {
 async function signUp(data) {
   try {
     var user = new userSchema(data);
-    res = await user.save();
-    return res;
+    res = await userSchema.findOne({ email: user.email });
+    if (user !== null) {
+      return messages.auth.signup.already_registered;
+    }
+    await user.save();
+
+    return messages.auth.signup.success;
   } catch (e) {
     console.log(`Error registering user:${e}`);
     throw e;

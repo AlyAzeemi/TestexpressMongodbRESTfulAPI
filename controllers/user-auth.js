@@ -1,6 +1,6 @@
 const authService = require("../services/authService");
 const bcrypt = require("bcrypt");
-const messages = require("../localization/messages");
+const { messages } = require("../localization/messages");
 const {
   sendResponseWithDataAndMessage,
   errorResponseWithOnlyMessage,
@@ -22,9 +22,12 @@ signup = async (req, res) => {
 
     //Signup
     const response = await authService.signUp(userFormData);
+    console.log(response);
     if (response == messages.auth.signup.already_registered) {
+      console.log("f1");
       return errorResponseWithOnlyMessage(res, response);
     }
+    console.log("f2");
     return sendResponseOnlyWithMessage(
       res,
       true,
@@ -32,10 +35,12 @@ signup = async (req, res) => {
       200
     );
   } catch (e) {
+    console.log("f3");
     console.log(`Error creating user: ${e}`);
     errorResponseWithOnlyMessage(res, e);
   }
 };
+
 login = async (req, res) => {
   try {
     //Get args
