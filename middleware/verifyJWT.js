@@ -14,10 +14,9 @@ function verifyJWT(req, res, next) {
 
 function ensureWebToken(req, res, next) {
   try {
-    const x_access_token = req.headers["cookie"].split("=")[1];
-    console.log(x_access_token);
+    const x_access_token = req.headers["cookie"];
     if (typeof x_access_token !== "undefined") {
-      req.token = x_access_token;
+      req.token = x_access_token.split("=")[1];
       verifyJWT(req, res, next);
     } else {
       res.sendStatus(403);
@@ -29,9 +28,19 @@ function ensureWebToken(req, res, next) {
 
 function ensureNoWebToken(req, res, next) {
   try {
-    const x_access_token = req.headers["cookie"].split("=")[1];
+    const x_access_token = req.headers["cookie"];
     if (typeof x_access_token !== "undefined") {
-      res.redirect("dashboard");
+      cookies = x_access_token.split("=");
+      sortedCookies = {};
+      for (let i = 0; i < cookies.length; i = i + 2) {
+        sortedCookies[`${cookies[i]}`] = cookies[i + 1];
+      }
+      console.log(sortedCookies);
+      if (sortedCookies.JWToken) {
+        res.redirect("dashboard");
+      } else {
+        next();
+      }
     } else {
       next();
     }
