@@ -33,6 +33,7 @@ app.get("/signup", ensureNoWebToken, (req, res) => {
 
 //userDashboard
 app.get("/dashboard", ensureWebToken, (req, res) => {
+  console.log(req.user.email + " has been logged in successfully");
   res.sendFile(path.join(__dirname, "static", "dashboard.html"));
 });
 

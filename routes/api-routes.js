@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const { mongoPass } = require("../secrets.json");
 const mongoPath = `mongodb+srv://aly:${mongoPass}@cluster0.fwdpv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const auth = require("../controllers/user-auth");
-
+const { ensureWebToken } = require("../middleware/verifyJWT");
 mongoose
   .connect(mongoPath, {
     useNewUrlParser: true,
@@ -19,6 +19,11 @@ mongoose
 router = Router();
 router.post("/login", auth.login);
 router.post("/signup", auth.signup);
-router.post("/logout", auth.logout);
-
+router.post("/logout", ensureWebToken, auth.logout);
+router.post(
+  "/users/:id", //makeshift function
+  (req, res) => {
+    res.send(req.params.id);
+  }
+);
 module.exports.apiRoutes = router;

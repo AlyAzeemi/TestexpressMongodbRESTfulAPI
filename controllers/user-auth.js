@@ -6,6 +6,7 @@ const {
   errorResponseWithOnlyMessage,
   sendResponseOnlyWithMessage,
 } = require("../methods/response");
+const userSchema = require("../models/user-schema");
 
 signup = async (req, res) => {
   try {
@@ -22,7 +23,6 @@ signup = async (req, res) => {
 
     //Signup
     const response = await authService.signUp(userFormData);
-    console.log(response);
     if (response == messages.auth.signup.already_registered) {
       return errorResponseWithOnlyMessage(res, response);
     }
@@ -85,7 +85,12 @@ login = async (req, res) => {
 logout = async (req, res) => {
   //TODO: figure out how to make this work
   try {
+    console.log(req.token);
     res.clearCookie("JWToken", req.token), { httpOnly: true };
+    await userSchema.findOneAndUpdate(
+      { JWToken: req.token },
+      { $set: { JWToken: "" } }
+    );
     res.redirect("../login");
   } catch (e) {
     console.log(`Error whilst logging out user: ${e}`);
