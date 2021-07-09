@@ -70,7 +70,7 @@ login = async (req, res) => {
         200
       );*/
       res.cookie("JWToken", response.JWToken, {
-        expiresIn: new Date(Date.now() + 60 * 15 * 1000),
+        expires: new Date(Date.now() + 60 * 15 * 1000),
       });
       return res.redirect("../dashboard");
     } else {
