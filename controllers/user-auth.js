@@ -1,74 +1,104 @@
-const mongoose = require("mongoose");
-const { mongoPass } = require("../secrets.json");
-const mongoPath = `mongodb+srv://aly:${mongoPass}@cluster0.fwdpv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
-const userSchema = require("../models/user-schema");
+const authService = require("../services/authService");
+const bcrypt = require("bcrypt");
+const { messages } = require("../localization/messages");
+const {
+  sendResponseWithDataAndMessage,
+  errorResponseWithOnlyMessage,
+  sendResponseOnlyWithMessage,
+} = require("../methods/response");
 
-async function connectToMongoDB() {
+signup = async (req, res) => {
   try {
-    await mongoose.connect(mongoPath, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-  } catch (e) {
-    console.log(`Error connecting to database: ${e}`);
-  }
-}
-async function signup(user) {
-  try {
-    await userSchema(user).save();
-    return { message: "Account created successfully!", signupStatus: true };
+    let userFormData = {
+      email: req.body.email,
+      username: req.body.username,
+      password: req.body.password,
+      age: req.body.age,
+    };
+
+    //Hash password
+    let salt = await bcrypt.genSalt(10);
+    userFormData.password = await bcrypt.hash(userFormData.password, salt);
+
+    //Signup
+    const response = await authService.signUp(userFormData);
+    console.log(response);
+    if (response == messages.auth.signup.already_registered) {
+      return errorResponseWithOnlyMessage(res, response);
+    }
+
+    return sendResponseOnlyWithMessage(
+      res,
+      true,
+      messages.auth.signup.success,
+      200
+    );
   } catch (e) {
     console.log(`Error creating user: ${e}`);
-    return {
-      message: "An account affiliated with that email already exists.",
-      signupStatus: false,
-    };
+    errorResponseWithOnlyMessage(res, e);
   }
-}
-async function login(qEmail, qPassword) {
+};
+
+login = async (req, res) => {
   try {
+    //Get args
+    const qEmail = req.body.email;
+    const qPassword = req.body.password;
+    let success = false;
     console.log(qEmail, qPassword);
-    const result = await userSchema.findOne({
-      email: qEmail,
-    });
-    /*
-    result.comparePassword(qPassword, function (matchError, isMatch) {
-      if (matchError) {
-        callback({ error: true });
-      } else if (!isMatch) {
-        callback({ error: true });
-      } else {
-        callback({ success: true });
-      }
-    });*/
-    if (result !== null) {
-      const match = await result.comparePasswordAsync(qPassword);
-      if (match) {
-        return {
-          message: "Login Successful!",
-          loginStatus: true,
-          userData: result,
-        };
-      } else {
-        throw `Incorrect password for ${result.email}`;
-      }
+
+    /*Hash password
+    let salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(qPassword, salt);*/
+
+    //Process args
+    const response = await authService.login(qEmail, qPassword);
+
+    //If email not found
+    if (response == messages.auth.login.user_not_found) {
+      return errorResponseWithOnlyMessage(
+        res,
+        messages.auth.login.user_not_found
+      );
+    } //If email found but password doesn't match
+    else if (response == messages.auth.login.incorrect_password) {
+      errorResponseWithOnlyMessage(res, messages.auth.login.incorrect_password);
+    } //If everything checks out
+    else if (response.message == messages.auth.login.success) {
+      success = true;
+      /*
+      sendResponseOnlyWithMessage(
+        res,
+        success,
+        messages.auth.login.success,
+        200
+      );*/
+      res.cookie("JWToken", response.JWToken, {
+        expiresIn: new Date(Date.now() + 60 * 15 * 1000),
+      });
+      return res.redirect("../dashboard");
     } else {
-      throw "Account doesn't exist in DB.";
+      throw e;
     }
   } catch (e) {
     console.log(`Error logging in: ${e}`);
-    return {
-      message: "Either password or email is incorrect.",
-      loginStatus: false,
-    };
+    errorResponseWithOnlyMessage(res, e);
   }
-}
+};
+
+logout = async (req, res) => {
+  //TODO: figure out how to make this work
+  try {
+    res.clearCookie("JWToken", req.token), { httpOnly: true };
+    res.redirect("../login");
+  } catch (e) {
+    console.log(`Error whilst logging out user: ${e}`);
+  }
+};
 
 async function test() {
-  await connectToMongoDB();
   await signup();
-
   await login();
 }
 
-module.exports = { connectToMongoDB, login, signup };
+module.exports = { login, signup, logout };
