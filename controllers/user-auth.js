@@ -76,12 +76,6 @@ login = async (req, res) => {
       res.cookie("JWToken", response.JWToken, {
         expiresIn: new Date(Date.now() + 60 * 15 * 1000),
       });
-      res.cookie("joehu", "joemama", {
-        expiresIn: new Date(Date.now() + 60 * 15 * 1000),
-      });
-      res.cookie("sigma", "sigmagrindset", {
-        expiresIn: new Date(Date.now() + 60 * 15 * 1000),
-      });
       return res.redirect("../dashboard");
     } else {
       throw e;
