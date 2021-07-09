@@ -16,8 +16,18 @@ function ensureWebToken(req, res, next) {
   try {
     const x_access_token = req.headers["cookie"];
     if (typeof x_access_token !== "undefined") {
-      req.token = x_access_token.split("=")[1];
-      verifyJWT(req, res, next);
+      cookies = x_access_token.split("=");
+      sortedCookies = {};
+      for (let i = 0; i < cookies.length; i = i + 2) {
+        sortedCookies[`${cookies[i]}`] = cookies[i + 1];
+      }
+      console.log(sortedCookies);
+      req.token = sortedCookies.JWToken;
+      if (req.token) {
+        verifyJWT(req, res, next);
+      } else {
+        res.sendStatus(403);
+      }
     } else {
       res.sendStatus(403);
     }
