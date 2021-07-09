@@ -47,10 +47,6 @@ login = async (req, res) => {
     let success = false;
     console.log(qEmail, qPassword);
 
-    /*Hash password
-    let salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(qPassword, salt);*/
-
     //Process args
     const response = await authService.login(qEmail, qPassword);
 
