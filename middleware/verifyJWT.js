@@ -14,15 +14,17 @@ function verifyJWT(req, res, next) {
 
 function ensureWebToken(req, res, next) {
   try {
-    const x_access_token = req.headers["cookie"];
-    if (typeof x_access_token !== "undefined") {
-      cookies = x_access_token.split("=");
+    const cookieHeader = req.headers["cookie"];
+
+    if (typeof cookieHeader !== "undefined") {
+      cookies = cookieHeader.split(";");
       sortedCookies = {};
-      for (let i = 0; i < cookies.length; i = i + 2) {
-        sortedCookies[`${cookies[i]}`] = cookies[i + 1];
-      }
-      console.log(sortedCookies);
+      cookies.forEach((val) => {
+        let cookie = val.split("=");
+        sortedCookies[`${cookie[0].trim()}`] = cookie[1];
+      });
       req.token = sortedCookies.JWToken;
+      console.log(sortedCookies);
       if (req.token) {
         verifyJWT(req, res, next);
       } else {
@@ -39,13 +41,14 @@ function ensureWebToken(req, res, next) {
 
 function ensureNoWebToken(req, res, next) {
   try {
-    const x_access_token = req.headers["cookie"];
-    if (typeof x_access_token !== "undefined") {
-      cookies = x_access_token.split("=");
+    const cookieHeader = req.headers["cookie"];
+    if (typeof cookieHeader !== "undefined") {
+      cookies = cookieHeader.split(";");
       sortedCookies = {};
-      for (let i = 0; i < cookies.length; i = i + 2) {
-        sortedCookies[`${cookies[i]}`] = cookies[i + 1];
-      }
+      cookies.forEach((val) => {
+        let cookie = val.split("=");
+        sortedCookies[`${cookie[0].trim()}`] = cookie[1];
+      });
       console.log(sortedCookies);
       if (sortedCookies.JWToken) {
         res.redirect("dashboard");
