@@ -33,6 +33,7 @@ function ensureWebToken(req, res, next) {
     }
   } catch (e) {
     console.log(`Something terrible has happened: ${e}`);
+    res.send("Internal Server Error");
   }
 }
 
