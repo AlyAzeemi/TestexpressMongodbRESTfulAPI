@@ -10,6 +10,10 @@ messages = {
       incorrect_password: "Email or password is incorrect.",
       success: "Logged in.",
     },
+    resetPassword: {
+      success: "New password has been sent.",
+      failure: "Unable to send",
+    },
   },
 };
 module.exports = { messages };

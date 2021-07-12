@@ -1,7 +1,10 @@
 const userSchema = require("../models/user-schema");
 const { messages } = require("../localization/messages");
 const jwt = require("jsonwebtoken");
-
+const {
+  sendNewPassword,
+  sendVerificationCode,
+} = require("../constants/mailingAgent");
 async function login(qEmail, qPassword) {
   try {
     const user = await userSchema.findOne({ email: qEmail });
@@ -69,7 +72,39 @@ async function logout(token) {
   } catch (e) {}
 }
 
-async function resetPassword(req, res) {}
+async function resetPassword(qEmail) {
+  try {
+    var newPassword = "";
+    var characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var charactersLength = characters.length;
+    for (var i = 0; i < 8; i++) {
+      newPassword += characters.charAt(
+        Math.floor(Math.random() * charactersLength)
+      );
+    }
+    res = await userSchema.findOneAndUpdate(
+      { email: qEmail },
+      { $set: { password: newPassword } }
+    );
+    if (res) {
+      let success = await sendNewPassword(qEmail, newPassword);
+    } else {
+      throw e;
+    }
+
+    return { message: messages.auth.resetPassword.success };
+  } catch (e) {
+    console.log(`Error resetting password: ${e}`);
+    return { message: messages.auth.resetPassword.failure };
+  }
+}
 async function verifyEmail() {}
 
-module.exports = { login, signUp, checkIfJWTExists };
+module.exports = {
+  login,
+  signUp,
+  checkIfJWTExists,
+  resetPassword,
+  verifyEmail,
+};

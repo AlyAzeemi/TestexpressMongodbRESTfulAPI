@@ -97,7 +97,24 @@ logout = async (req, res) => {
   }
 };
 
-resetPassword = async (req, res) => {};
+resetPassword = async (req, res) => {
+  try {
+    let response = await authService.resetPassword(req.body.email);
+    if (response == messages.auth.resetPassword.success) {
+      return sendResponseOnlyWithMessage(
+        res,
+        true,
+        "New password has been sent to the given mailing address."
+      );
+    } else if (response == messages.auth.resetPassword.failure) {
+    } else {
+      throw e;
+    }
+  } catch (e) {
+    console.log(`Error resetting password ${e}`);
+    return errorResponseWithOnlyMessage(res, e);
+  }
+};
 verifyEmail = async (req, res) => {};
 
 async function test() {
@@ -105,4 +122,4 @@ async function test() {
   await login();
 }
 
-module.exports = { login, signup, logout };
+module.exports = { login, signup, logout, resetPassword, verifyEmail };

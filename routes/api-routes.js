@@ -20,10 +20,6 @@ router = Router();
 router.post("/login", auth.login);
 router.post("/signup", auth.signup);
 router.post("/logout", ensureWebToken, auth.logout);
-router.post(
-  "/users/:id", //makeshift function
-  (req, res) => {
-    res.send(req.params.id);
-  }
-);
+router.post("/resetPassword", auth.resetPassword);
+router.post("/verifyEmail", auth.verifyEmail);
 module.exports.apiRoutes = router;
