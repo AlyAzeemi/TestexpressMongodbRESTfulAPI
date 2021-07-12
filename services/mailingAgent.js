@@ -13,7 +13,7 @@ async function sendVerificationCode(targetEmail, username) {
   try {
     const codeLength = 4;
     let verificationCode = Math.floor(Math.random() * Math.pow(10, codeLength));
-    var mailOptions = {
+    let mailOptions = {
       from: serviceEmailAccount.email,
       to: targetEmail,
       subject: "Verification Code",
@@ -24,6 +24,23 @@ async function sendVerificationCode(targetEmail, username) {
     return true;
   } catch (e) {
     console.log(`mailingAgent failed to send verification code: ${e}`);
+    return false;
+  }
+}
+
+async function sendNewPassword(targetEmail, username, newPassword) {
+  try {
+    let mailOptions = {
+      from: serviceEmailAccount.email,
+      to: targetEmail,
+      subject: "New Password",
+      text: `Hi ${username}! Your password has been reset to ${newPassword}.Login and go to Settings->Account->Change Password in order to change your password to something more personalized.`,
+    };
+    res = await mail.sendMail(mailOptions);
+    console.log(res);
+    return true;
+  } catch (e) {
+    console.log(`mailingAgent failed to send new password: ${e}`);
     return false;
   }
 }
