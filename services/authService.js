@@ -68,4 +68,8 @@ async function logout(token) {
     await user.save();
   } catch (e) {}
 }
+
+async function resetPassword(req, res) {}
+async function verifyEmail() {}
+
 module.exports = { login, signUp, checkIfJWTExists };

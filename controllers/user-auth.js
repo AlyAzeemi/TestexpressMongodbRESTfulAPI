@@ -97,6 +97,9 @@ logout = async (req, res) => {
   }
 };
 
+resetPassword = async (req, res) => {};
+verifyEmail = async (req, res) => {};
+
 async function test() {
   await signup();
   await login();
