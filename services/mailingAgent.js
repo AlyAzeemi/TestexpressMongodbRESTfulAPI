@@ -45,4 +45,4 @@ async function sendNewPassword(targetEmail, username, newPassword) {
   }
 }
 
-module.exports = { sendVerificationCode };
+module.exports = { sendVerificationCode, sendNewPassword };
