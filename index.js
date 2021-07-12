@@ -37,6 +37,11 @@ app.get("/dashboard", ensureWebToken, (req, res) => {
   res.sendFile(path.join(__dirname, "static", "dashboard.html"));
 });
 
+//resetPassword
+app.get("/resetPassword", ensureNoWebToken, (req, res) => {
+  res.sendFile(path.join(__dirname, "static", "resetPassword.html"));
+});
+
 //Run
 app.listen(PORT, () => {
   console.log(`Up and running at http://localhost:${PORT}/`);
