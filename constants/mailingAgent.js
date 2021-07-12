@@ -9,10 +9,8 @@ var mail = mailClient.createTransport({
   },
 });
 
-async function sendVerificationCode(targetEmail, username) {
+async function sendVerificationCode(targetEmail, username, verificationCode) {
   try {
-    const codeLength = 4;
-    let verificationCode = Math.floor(Math.random() * Math.pow(10, codeLength));
     let mailOptions = {
       from: serviceEmailAccount.email,
       to: targetEmail,

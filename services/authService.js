@@ -74,6 +74,7 @@ async function logout(token) {
 
 async function resetPassword(qEmail) {
   try {
+    //Generate new password
     var newPassword = "";
     var characters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -83,23 +84,28 @@ async function resetPassword(qEmail) {
         Math.floor(Math.random() * charactersLength)
       );
     }
-    res = await userSchema.findOneAndUpdate(
-      { email: qEmail },
-      { $set: { password: newPassword } }
-    );
-    if (res) {
-      let success = await sendNewPassword(qEmail, newPassword);
+
+    //Send Email and update password
+    let success = await sendNewPassword(qEmail, newPassword);
+    if (success) {
+      res = await userSchema.findOneAndUpdate(
+        { email: qEmail },
+        { $set: { password: newPassword } }
+      );
+      return { message: messages.auth.resetPassword.success };
     } else {
       throw e;
     }
-
-    return { message: messages.auth.resetPassword.success };
   } catch (e) {
     console.log(`Error resetting password: ${e}`);
     return { message: messages.auth.resetPassword.failure };
   }
 }
-async function verifyEmail() {}
+async function verifyEmail(qEmail) {
+  const codeLength = 4;
+  let verificationCode = Math.floor(Math.random() * Math.pow(10, codeLength));
+  await userSchema.findOne({ email: qEmail });
+}
 
 module.exports = {
   login,
