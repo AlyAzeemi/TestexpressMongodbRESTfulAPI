@@ -1,10 +1,7 @@
 const userSchema = require("../models/user-schema");
 const { messages } = require("../localization/messages");
 const jwt = require("jsonwebtoken");
-const {
-  sendNewPassword,
-  sendVerificationCode,
-} = require("../constants/mailingAgent");
+const mailClient = require("../constants/mailingAgent");
 async function login(qEmail, qPassword) {
   try {
     const user = await userSchema.findOne({ email: qEmail });
@@ -85,32 +82,59 @@ async function resetPassword(qEmail) {
       );
     }
 
-    //Send Email and update password
-    let success = await sendNewPassword(qEmail, newPassword);
+    //Send Email
+    let success = await mailClient.sendNewPassword(qEmail, newPassword);
     if (success) {
+      //Update password
       res = await userSchema.findOneAndUpdate(
         { email: qEmail },
         { $set: { password: newPassword } }
       );
-      return { message: messages.auth.resetPassword.success };
+      return messages.auth.resetPassword.success;
     } else {
       throw e;
     }
   } catch (e) {
     console.log(`Error resetting password: ${e}`);
-    return { message: messages.auth.resetPassword.failure };
+    return messages.auth.resetPassword.failure;
   }
 }
-async function verifyEmail(qEmail) {
-  const codeLength = 4;
-  let verificationCode = Math.floor(Math.random() * Math.pow(10, codeLength));
-  await userSchema.findOne({ email: qEmail });
+async function sendVerificationCode(qEmail) {
+  try {
+    //Generate Code
+    const codeLength = 4;
+    let verificationCode = Math.floor(Math.random() * Math.pow(10, codeLength));
+
+    //Send Code
+    user = await userSchema.findOne({ email: qEmail });
+    if (user) {
+      success = await mailClient.sendVerificationCode(
+        qEmail,
+        user.username,
+        verificationCode
+      );
+      if (success) {
+        user.verificationCode = verificationCode;
+        await user.save();
+        return messages.auth.sendVerificationCode.success;
+      } else {
+        throw e;
+      }
+    } else {
+      throw e;
+    }
+  } catch (e) {
+    console.log(`Error sending verification code:${e}`);
+    return messages.auth.sendVerificationCode.failure;
+  }
 }
+
+async function checkVerificationCode(qEmail) {}
 
 module.exports = {
   login,
   signUp,
   checkIfJWTExists,
   resetPassword,
-  verifyEmail,
+  sendVerificationCode,
 };

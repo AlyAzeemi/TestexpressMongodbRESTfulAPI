@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const primaryKey = { type: String, required: true, unique: true };
 const reqString = { type: String, required: true };
 const optInt = { type: Number, required: false };
+const account = { type: String, required: true, default: "user" };
 
 const userSchema = mongoose.Schema(
   {
@@ -11,8 +12,10 @@ const userSchema = mongoose.Schema(
     password: reqString,
     age: optInt,
     JWToken: String,
-    isEmailVerified: Boolean,
-    adminApproval: Boolean,
+    isEmailVerified: { type: Boolean, default: false },
+    adminApproval: { type: Boolean, default: false },
+    accountType: account,
+    verificationCode: optInt,
   },
   { timestamps: true }
 );

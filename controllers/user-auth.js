@@ -7,6 +7,7 @@ const {
   sendResponseOnlyWithMessage,
 } = require("../methods/response");
 const userSchema = require("../models/user-schema");
+const { check } = require("express-validator");
 
 signup = async (req, res) => {
   try {
@@ -107,6 +108,7 @@ resetPassword = async (req, res) => {
         "New password has been sent to the given mailing address."
       );
     } else if (response == messages.auth.resetPassword.failure) {
+      return errorResponseWithOnlyMessage(res, response);
     } else {
       throw e;
     }
@@ -115,11 +117,24 @@ resetPassword = async (req, res) => {
     return errorResponseWithOnlyMessage(res, e);
   }
 };
-verifyEmail = async (req, res) => {};
+
+verifyCode = async (req, res) => {};
+
+sendVerificationEmail = async (req, res) => {
+  try {
+  } catch (e) {}
+};
 
 async function test() {
   await signup();
   await login();
 }
 
-module.exports = { login, signup, logout, resetPassword, verifyEmail };
+module.exports = {
+  login,
+  signup,
+  logout,
+  resetPassword,
+  sendVerificationEmail,
+  verifyCode,
+};

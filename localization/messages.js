@@ -14,7 +14,10 @@ messages = {
       success: "New password has been sent.",
       failure: "Unable to send",
     },
-    verifyEmail: { success: "Verification code has been sent", failure: "" },
+    sendVerificationCode: {
+      success: "Verification code has been sent",
+      failure: "Unable to send verification code at mailing address",
+    },
   },
 };
 module.exports = { messages };
