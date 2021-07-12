@@ -12,6 +12,7 @@ const userSchema = mongoose.Schema(
     age: optInt,
     JWToken: String,
     isEmailVerified: Boolean,
+    adminApproval: Boolean,
   },
   { timestamps: true }
 );
