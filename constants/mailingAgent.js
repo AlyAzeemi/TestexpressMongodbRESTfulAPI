@@ -49,7 +49,6 @@ async function sendNewPassword(targetEmail, username, plainTextNewPassword) {
       },
     };
     id++;
-
     res = await mail.sendMail(mailOptions);
     console.log(res);
   } catch (e) {
