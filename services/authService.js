@@ -72,23 +72,17 @@ async function logout(token) {
 async function resetPassword(qEmail, plainTextNewPassword, HashedNewPassword) {
   try {
     //See if user exists
-    user = await userSchema.findOne({ email: qEmail });
+    let user = await userSchema.findOne({ email: qEmail });
     if (user) {
       //Send Email
-      let success = await mailClient.sendNewPassword(
-        qEmail,
-        plainTextNewPassword
-      );
-      if (success) {
-        //Update password
-        user.password = HashedNewPassword;
-        await user.save();
-        return messages.auth.resetPassword.success;
-      } else {
-        throw e;
-      }
+      await mailClient.sendNewPassword(qEmail, plainTextNewPassword);
+
+      //Update password
+      user.password = HashedNewPassword;
+      await user.save();
+      return messages.auth.resetPassword.success;
     } else {
-      throw e;
+      throw `No account affiliated with ${qEmail} was found.`;
     }
   } catch (e) {
     console.log(`Error resetting password: ${e}`);

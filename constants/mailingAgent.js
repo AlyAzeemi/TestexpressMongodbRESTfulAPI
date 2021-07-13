@@ -52,10 +52,9 @@ async function sendNewPassword(targetEmail, username, plainTextNewPassword) {
     id++;
     res = await mail.sendMail(mailOptions);
     console.log(res);
-    return true;
   } catch (e) {
     console.log(`mailingAgent failed to send new password: ${e}`);
-    return false;
+    throw e;
   }
 }
 
