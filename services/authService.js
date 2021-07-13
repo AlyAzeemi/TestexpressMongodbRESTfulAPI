@@ -42,16 +42,6 @@ async function login(qEmail, qPassword) {
   }
 }
 
-async function checkIfJWTExists(token) {
-  try {
-    var user = await userSchema.findOne({ JWToken: token });
-    return user;
-  } catch (e) {
-    console.log(`Error finding JWToken: ${e}`);
-    throw e;
-  }
-}
-
 async function signUp(data) {
   try {
     var user = new userSchema(data);
@@ -172,7 +162,6 @@ async function verifyCode(qEmail, qCode) {
 module.exports = {
   login,
   signUp,
-  checkIfJWTExists,
   resetPassword,
   sendVerificationCode,
   verifyCode,

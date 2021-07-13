@@ -16,6 +16,7 @@ app.use(helmet());
 app.use("/api", apiRoutes);
 
 //-----------------------------------------------GET REQUESTS-------------------------------------------------
+//TODO: Probably get try catch blocks going here as well
 //Home
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "static", "index.html"));
@@ -36,8 +37,15 @@ app.get("/dashboard", ensureWebToken, (req, res) => {
   console.log(
     `${req.user._id}|${req.user.email}|${req.user.username} logged in.`
   );
-  res.locals.user = req.user;
-  res.sendFile(path.join(__dirname, "static", "dashboard.html"));
+  let baseHTML = `<h1>Dashboard</h1>
+  <form action="/api/logout" method="POST"><button>Log Out</button></form>
+  `;
+  let verifyEmailButton = `<a href="/sendVerificationEmail"><button>Verify Email</button></a>`;
+  if (req.user.isEmailVerified) {
+    res.send(baseHTML + "Email verified.");
+  } else {
+    res.send(baseHTML + verifyEmailButton);
+  }
 });
 
 //sendVerificationEmail
