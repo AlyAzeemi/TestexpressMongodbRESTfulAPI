@@ -100,7 +100,26 @@ logout = async (req, res) => {
 
 resetPassword = async (req, res) => {
   try {
-    let response = await authService.resetPassword(req.body.email);
+    //Generate new password
+    var plainTextNewPassword = "";
+    var characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var charactersLength = characters.length;
+    for (var i = 0; i < 8; i++) {
+      newPassword += characters.charAt(
+        Math.floor(Math.random() * charactersLength)
+      );
+    }
+
+    //Hash password
+    let salt = await bcrypt.genSalt(10);
+    HashedNewPassword = await bcrypt.hash(plainTextNewPassword, salt);
+
+    let response = await authService.resetPassword(
+      req.body.email,
+      plainTextNewPassword,
+      HashedNewPassword
+    );
     if (response == messages.auth.resetPassword.success) {
       return sendResponseOnlyWithMessage(
         res,

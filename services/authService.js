@@ -69,28 +69,24 @@ async function logout(token) {
   } catch (e) {}
 }
 
-async function resetPassword(qEmail) {
+async function resetPassword(qEmail, plainTextNewPassword, HashedNewPassword) {
   try {
-    //Generate new password
-    var newPassword = "";
-    var characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    var charactersLength = characters.length;
-    for (var i = 0; i < 8; i++) {
-      newPassword += characters.charAt(
-        Math.floor(Math.random() * charactersLength)
+    //See if user exists
+    user = await userSchema.findOne({ email: qEmail });
+    if (user) {
+      //Send Email
+      let success = await mailClient.sendNewPassword(
+        qEmail,
+        plainTextNewPassword
       );
-    }
-
-    //Send Email
-    let success = await mailClient.sendNewPassword(qEmail, newPassword);
-    if (success) {
-      //Update password
-      res = await userSchema.findOneAndUpdate(
-        { email: qEmail },
-        { $set: { password: newPassword } }
-      );
-      return messages.auth.resetPassword.success;
+      if (success) {
+        //Update password
+        user.password = HashedNewPassword;
+        await user.save();
+        return messages.auth.resetPassword.success;
+      } else {
+        throw e;
+      }
     } else {
       throw e;
     }
