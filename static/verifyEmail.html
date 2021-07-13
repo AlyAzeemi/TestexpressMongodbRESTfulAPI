@@ -29,9 +29,13 @@
         </div>
     </nav>
 
+    <form action="/api/sendVerificationEmail"
+        onclick="this.form.submit(); this.disabled=true; this.value='Check your inbox. This might take a few seconds.';">
+        <input type="button" value="Send Code">
+    </form>
     <form action="/api/verifyCode">
         <input type="number" name="code" required>
-        <input type="submit" value="Send">
+        <input type="submit" value="Submit">
     </form>
     <!-- JS FILES-->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"

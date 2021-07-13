@@ -17,6 +17,7 @@ messages = {
     },
     sendVerificationCode: {
       success: "Verification code has been sent",
+      user_not_found: "Email not registered.",
       failure: "Unable to send verification code at mailing address",
     },
   },

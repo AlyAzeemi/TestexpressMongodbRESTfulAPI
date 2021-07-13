@@ -22,4 +22,5 @@ router.post("/signup", auth.signup);
 router.post("/logout", ensureWebToken, auth.logout);
 router.post("/resetPassword", auth.resetPassword);
 router.post("/sendVerificationEmail", auth.sendVerificationEmail);
+router.post("/verifyCode", auth.verifyCode);
 module.exports.apiRoutes = router;

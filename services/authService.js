@@ -124,7 +124,7 @@ async function sendVerificationCode(qEmail) {
 
       return messages.auth.sendVerificationCode.success;
     } else {
-      throw `No account affiliated with ${qEmail} was found.`;
+      return messages.auth.sendVerificationCode.user_not_found;
     }
   } catch (e) {
     console.log(`Error sending verification code:${e}`);
@@ -132,7 +132,11 @@ async function sendVerificationCode(qEmail) {
   }
 }
 
-async function checkVerificationCode(qEmail) {}
+async function checkVerificationCode(qEmail) {
+  try {
+    user = await userSchema.findOne({ email: qEmail });
+  } catch (e) {}
+}
 
 module.exports = {
   login,
