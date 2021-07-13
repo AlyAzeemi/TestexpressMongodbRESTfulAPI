@@ -5,6 +5,7 @@ const {
   sendResponseWithDataAndMessage,
   errorResponseWithOnlyMessage,
   sendResponseOnlyWithMessage,
+  errorResponse,
 } = require("../methods/response");
 const userSchema = require("../models/user-schema");
 const { check } = require("express-validator");
@@ -127,10 +128,13 @@ resetPassword = async (req, res) => {
         "New password has been sent to the given mailing address.",
         200
       );
-    } else if (response == messages.auth.resetPassword.failure) {
+    } else if (
+      response == messages.auth.resetPassword.failure ||
+      response == messages.auth.resetPassword.user_not_found
+    ) {
       return errorResponseWithOnlyMessage(res, response);
     } else {
-      throw e;
+      throw "Internal Server Error.";
     }
   } catch (e) {
     console.log(`Error resetting password ${e}`);

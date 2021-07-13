@@ -33,8 +33,14 @@ app.get("/signup", ensureNoWebToken, (req, res) => {
 
 //userDashboard
 app.get("/dashboard", ensureWebToken, (req, res) => {
-  console.log(req.user.email + " has been logged in successfully");
+  console.log(`${req.user._id}|${req.user.email}|${req.user} logged in.`);
+  res.locals.user = req.user;
   res.sendFile(path.join(__dirname, "static", "dashboard.html"));
+});
+
+//verifyEmail
+app.get("/verifyEmail", ensureWebToken, (req, res) => {
+  res.sendFile(path.join(__dirname, "static", "verifyEmail.html"));
 });
 
 //resetPassword

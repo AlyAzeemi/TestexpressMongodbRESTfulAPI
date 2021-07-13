@@ -12,6 +12,7 @@ messages = {
     },
     resetPassword: {
       success: "New password has been sent.",
+      user_not_found: "Email not registered.",
       failure: "Unable to send",
     },
     sendVerificationCode: {

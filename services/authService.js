@@ -2,6 +2,7 @@ const userSchema = require("../models/user-schema");
 const { messages } = require("../localization/messages");
 const jwt = require("jsonwebtoken");
 const mailClient = require("../constants/mailingAgent");
+
 async function login(qEmail, qPassword) {
   try {
     const user = await userSchema.findOne({ email: qEmail });
@@ -22,7 +23,13 @@ async function login(qEmail, qPassword) {
       //TODO: Figure out how this works
       //Login and sign JWT
       const JWToken = await jwt.sign(
-        { _id: user._id, email: user.email },
+        {
+          _id: user._id,
+          email: user.email,
+          username: user.username,
+          isEmailVerified: user.isEmailVerified,
+          accountType: user.accountType,
+        },
         "secretkey",
         { expiresIn: "1d" }
       );
