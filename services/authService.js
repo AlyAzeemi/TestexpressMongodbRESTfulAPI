@@ -159,6 +159,10 @@ async function verifyCode(qEmail, qCode) {
   }
 }
 
+async function verifyUserByAdmin(qEmail) {
+  user = userSchema.findOne({ email: qEmail });
+}
+
 module.exports = {
   login,
   signUp,
