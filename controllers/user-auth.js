@@ -142,17 +142,41 @@ resetPassword = async (req, res) => {
   }
 };
 
-verifyCode = async (req, res) => {};
-
 sendVerificationEmail = async (req, res) => {
   try {
-  } catch (e) {}
+    response = await authService.sendVerificationCode(req.user.email);
+    if (response == messages.auth.sendVerificationCode.success) {
+      res.redirect("../verifyCode");
+    } else if (
+      response == messages.auth.sendVerificationCode.user_not_found ||
+      response == messages.auth.sendVerificationCode.failure
+    ) {
+      return errorResponseWithOnlyMessage(res, response);
+    }
+  } catch (e) {
+    console.log(`Error in controller sending verification email:${e}`);
+    return errorResponseWithOnlyMessage(res, "Internal Server Error");
+  }
 };
 
-async function test() {
-  await signup();
-  await login();
-}
+verifyCode = async (req, res) => {
+  try {
+    response = await authService.verifyCode(req.user.email, req.body.code);
+    if (response.message == messages.auth.verifyCode.success) {
+      res.cookie("JWToken", response.JWToken, {
+        expires: new Date(Date.now() + 60 * 15 * 1000),
+      });
+      return sendResponseOnlyWithMessage(res, true, response.message, 200);
+    } else if (response.message == messages.auth.verifyCode.failure) {
+      return errorResponseWithOnlyMessage(res, response.message);
+    } else {
+      throw "Account not found but this shouldn't even be happening here";
+    }
+  } catch (e) {
+    console.log(`Error in controller verifying code: ${e}`);
+    return errorResponseWithOnlyMessage(res, "Internal Server Error");
+  }
+};
 
 module.exports = {
   login,

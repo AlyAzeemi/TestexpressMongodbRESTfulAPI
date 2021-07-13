@@ -132,10 +132,41 @@ async function sendVerificationCode(qEmail) {
   }
 }
 
-async function checkVerificationCode(qEmail) {
+async function verifyCode(qEmail, qCode) {
   try {
     user = await userSchema.findOne({ email: qEmail });
-  } catch (e) {}
+    if (user) {
+      //Check if code matches
+      if (user.verificationCode == qCode) {
+        user.verificationCode = "";
+        user.isEmailVerified = true;
+
+        //ResignToken
+        const JWToken = await jwt.sign(
+          {
+            _id: user._id,
+            email: user.email,
+            username: user.username,
+            isEmailVerified: user.isEmailVerified,
+            accountType: user.accountType,
+          },
+          "secretkey",
+          { expiresIn: "1d" }
+        );
+        user.JWToken = JWToken;
+
+        user.save();
+        return { message: messages.auth.verifyCode.success, JWToken: JWToken };
+      } else {
+        return { message: messages.auth.verifyCode.failure };
+      }
+    } else {
+      throw "Account not found. It should not be possible to trigger this without having logged in so this shouldnt be happening in any case.";
+    }
+  } catch (e) {
+    console.log(`Error verifying code: ${e}`);
+    throw e;
+  }
 }
 
 module.exports = {
@@ -144,4 +175,5 @@ module.exports = {
   checkIfJWTExists,
   resetPassword,
   sendVerificationCode,
+  verifyCode,
 };

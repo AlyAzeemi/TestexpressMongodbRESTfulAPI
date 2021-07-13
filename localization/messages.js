@@ -20,6 +20,10 @@ messages = {
       user_not_found: "Email not registered.",
       failure: "Unable to send verification code at mailing address",
     },
+    verifyCode: {
+      success: "Email has been verified",
+      failure: "Incorrect submission",
+    },
   },
 };
 module.exports = { messages };

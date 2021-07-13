@@ -17,26 +17,12 @@
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/signup" tabindex="-1" aria-disabled="true">Sign up</a>
-                </li>
-            </ul>
-        </div>
     </nav>
 
-    <form action="/api/sendVerificationEmail"
-        onclick="this.form.submit(); this.disabled=true; this.value='Check your inbox. This might take a few seconds.';">
-        <input type="button" value="Send Code">
+    <form action="/api/sendVerificationEmail" method="POST">
+        <input type="submit" value="Send Code" onclick="this.form.submit(); this.disabled=true; this.value='Sending…';">
     </form>
-    <form action="/api/verifyCode">
-        <input type="number" name="code" required>
-        <input type="submit" value="Submit">
-    </form>
+
     <!-- JS FILES-->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
         integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"

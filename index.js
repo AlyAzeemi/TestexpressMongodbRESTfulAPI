@@ -40,9 +40,13 @@ app.get("/dashboard", ensureWebToken, (req, res) => {
   res.sendFile(path.join(__dirname, "static", "dashboard.html"));
 });
 
-//verifyEmail
-app.get("/verifyEmail", ensureWebToken, (req, res) => {
-  res.sendFile(path.join(__dirname, "static", "verifyEmail.html"));
+//sendVerificationEmail
+app.get("/sendVerificationEmail", ensureWebToken, (req, res) => {
+  res.sendFile(path.join(__dirname, "static", "sendVerificationEmail.html"));
+});
+//verifyCode
+app.get("/verifyCode", ensureWebToken, (req, res) => {
+  res.sendFile(path.join(__dirname, "static", "verifyCode.html"));
 });
 
 //resetPassword
