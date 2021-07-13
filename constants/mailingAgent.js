@@ -28,10 +28,9 @@ async function sendVerificationCode(targetEmail, username, verificationCode) {
     res = await mail.sendMail(mailOptions);
 
     console.log(res);
-    return true;
   } catch (e) {
     console.log(`mailingAgent failed to send verification code: ${e}`);
-    return false;
+    throw e;
   }
 }
 

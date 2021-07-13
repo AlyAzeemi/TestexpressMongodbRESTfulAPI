@@ -75,11 +75,16 @@ async function resetPassword(qEmail, plainTextNewPassword, HashedNewPassword) {
     let user = await userSchema.findOne({ email: qEmail });
     if (user) {
       //Send Email
-      await mailClient.sendNewPassword(qEmail, plainTextNewPassword);
+      await mailClient.sendNewPassword(
+        qEmail,
+        user.username,
+        plainTextNewPassword
+      );
 
       //Update password
       user.password = HashedNewPassword;
       await user.save();
+
       return messages.auth.resetPassword.success;
     } else {
       throw `No account affiliated with ${qEmail} was found.`;
@@ -95,23 +100,24 @@ async function sendVerificationCode(qEmail) {
     const codeLength = 4;
     let verificationCode = Math.floor(Math.random() * Math.pow(10, codeLength));
 
-    //Send Code
+    //Check if user exists
     user = await userSchema.findOne({ email: qEmail });
     if (user) {
-      success = await mailClient.sendVerificationCode(
+      //Mail code
+      await mailClient.sendVerificationCode(
         qEmail,
         user.username,
         verificationCode
       );
-      if (success) {
-        user.verificationCode = verificationCode;
-        await user.save();
-        return messages.auth.sendVerificationCode.success;
-      } else {
-        throw e;
-      }
+
+      //Store for verification
+      //TODO: Add expiry
+      user.verificationCode = verificationCode;
+      await user.save();
+
+      return messages.auth.sendVerificationCode.success;
     } else {
-      throw e;
+      throw `No account affiliated with ${qEmail} was found.`;
     }
   } catch (e) {
     console.log(`Error sending verification code:${e}`);

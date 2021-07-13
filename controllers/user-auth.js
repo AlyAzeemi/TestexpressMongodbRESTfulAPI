@@ -124,7 +124,8 @@ resetPassword = async (req, res) => {
       return sendResponseOnlyWithMessage(
         res,
         true,
-        "New password has been sent to the given mailing address."
+        "New password has been sent to the given mailing address.",
+        200
       );
     } else if (response == messages.auth.resetPassword.failure) {
       return errorResponseWithOnlyMessage(res, response);
