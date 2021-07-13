@@ -94,7 +94,7 @@ async function resetPassword(qEmail, plainTextNewPassword, HashedNewPassword) {
 
       return messages.auth.resetPassword.success;
     } else {
-      throw `No account affiliated with ${qEmail} was found.`;
+      return messages.auth.resetPassword.user_not_found;
     }
   } catch (e) {
     console.log(`Error resetting password: ${e}`);
