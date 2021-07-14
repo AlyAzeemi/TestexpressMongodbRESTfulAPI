@@ -63,4 +63,36 @@ function ensureNoWebToken(req, res, next) {
     res.send("Internal Server Error");
   }
 }
-module.exports = { ensureWebToken, ensureNoWebToken };
+
+async function ensureAdmin(req, res, next) {
+  try {
+    const cookieHeader = req.headers["cookie"];
+    if (typeof cookieHeader !== "undefined") {
+      cookies = cookieHeader.split(";");
+      sortedCookies = {};
+      cookies.forEach((val) => {
+        let cookie = val.split("=");
+        sortedCookies[`${cookie[0].trim()}`] = cookie[1];
+      });
+      req.token = sortedCookies.JWToken;
+      if (req.token) {
+        let decodedData = jwt.verify(req.token, "secretkey");
+        if (decodedData.accountType == "admin") {
+          req.user = decodedData;
+          next();
+        } else {
+          res.send("Unauthorized Call");
+        }
+      } else {
+        res.send("Unauthorized Call");
+      }
+    } else {
+      res.send("Unauthorized Call");
+    }
+  } catch (e) {
+    console.log(e);
+    res.send("Internal Server Error");
+  }
+}
+
+module.exports = { ensureWebToken, ensureNoWebToken, ensureAdmin };

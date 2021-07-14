@@ -54,13 +54,10 @@ login = async (req, res) => {
 
     //If email not found
     if (response == messages.auth.login.user_not_found) {
-      return errorResponseWithOnlyMessage(
-        res,
-        messages.auth.login.user_not_found
-      );
+      return errorResponseWithOnlyMessage(res, response);
     } //If email found but password doesn't match
     else if (response == messages.auth.login.incorrect_password) {
-      errorResponseWithOnlyMessage(res, messages.auth.login.incorrect_password);
+      errorResponseWithOnlyMessage(res, response);
     } //If everything checks out
     else if (response.message == messages.auth.login.success) {
       success = true;
@@ -89,10 +86,7 @@ logout = async (req, res) => {
   try {
     console.log(req.token);
     res.clearCookie("JWToken", req.token), { httpOnly: true };
-    await userSchema.findOneAndUpdate(
-      { JWToken: req.token },
-      { $set: { JWToken: "" } }
-    );
+    await authService.logout(req.token);
     res.redirect("../login");
   } catch (e) {
     console.log(`Error whilst logging out user: ${e}`);
@@ -116,18 +110,13 @@ resetPassword = async (req, res) => {
     let salt = await bcrypt.genSalt(10);
     HashedNewPassword = await bcrypt.hash(plainTextNewPassword, salt);
 
-    let response = await authService.resetPassword(
+    const response = await authService.resetPassword(
       req.body.email,
       plainTextNewPassword,
       HashedNewPassword
     );
     if (response == messages.auth.resetPassword.success) {
-      return sendResponseOnlyWithMessage(
-        res,
-        true,
-        "New password has been sent to the given mailing address.",
-        200
-      );
+      return sendResponseOnlyWithMessage(res, true, response, 200);
     } else if (
       response == messages.auth.resetPassword.failure ||
       response == messages.auth.resetPassword.user_not_found
@@ -144,7 +133,7 @@ resetPassword = async (req, res) => {
 
 sendVerificationEmail = async (req, res) => {
   try {
-    response = await authService.sendVerificationCode(req.user.email);
+    const response = await authService.sendVerificationCode(req.user.email);
     if (response == messages.auth.sendVerificationCode.success) {
       res.redirect("../verifyCode");
     } else if (
@@ -161,7 +150,10 @@ sendVerificationEmail = async (req, res) => {
 
 verifyCode = async (req, res) => {
   try {
-    response = await authService.verifyCode(req.user.email, req.body.code);
+    const response = await authService.verifyCode(
+      req.user.email,
+      req.body.code
+    );
     if (response.message == messages.auth.verifyCode.success) {
       res.cookie("JWToken", response.JWToken, {
         expires: new Date(Date.now() + 60 * 15 * 1000),
@@ -178,6 +170,27 @@ verifyCode = async (req, res) => {
   }
 };
 
+verifyUserByAdmin = async (req, res) => {
+  try {
+    const response = await authService.verifyUserByAdmin(
+      req.body.email,
+      req.user.email
+    );
+    if (response == messages.auth.verifyUserByAdmin.success) {
+      return sendResponseOnlyWithMessage(res, true, response, 200);
+    } else if (
+      response == messages.auth.verifyUserByAdmin.unauthorized_request
+    ) {
+      return errorResponseWithOnlyMessage(res, response);
+    } else if (response == messages.auth.verifyUserByAdmin.user_not_found) {
+      return errorResponseWithOnlyMessage(res, response);
+    }
+  } catch (e) {
+    console.log(`Error in user-auth:verifyUserByAdmin: ${e}`);
+    return errorResponseWithOnlyMessage(res, "Internal Server Error");
+  }
+};
+
 module.exports = {
   login,
   signup,
@@ -185,4 +198,5 @@ module.exports = {
   resetPassword,
   sendVerificationEmail,
   verifyCode,
+  verifyUserByAdmin,
 };

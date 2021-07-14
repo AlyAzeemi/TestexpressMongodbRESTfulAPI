@@ -1,7 +1,11 @@
 const express = require("express");
 const morgan = require("morgan");
 const { apiRoutes } = require("./routes/api-routes");
-const { ensureWebToken, ensureNoWebToken } = require("./middleware/verifyJWT");
+const {
+  ensureWebToken,
+  ensureNoWebToken,
+  ensureAdmin,
+} = require("./middleware/verifyJWT");
 const path = require("path");
 const helmet = require("helmet");
 
@@ -60,6 +64,11 @@ app.get("/verifyCode", ensureWebToken, (req, res) => {
 //resetPassword
 app.get("/resetPassword", ensureNoWebToken, (req, res) => {
   res.sendFile(path.join(__dirname, "static", "resetPassword.html"));
+});
+
+//verifyUserByAdmin
+app.get("/verifyUserByAdmin", ensureAdmin, (req, res) => {
+  res.sendFile(path.join(__dirname, "static", "verifyUserByAdmin.html"));
 });
 
 //Run

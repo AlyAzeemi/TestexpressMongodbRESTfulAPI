@@ -60,10 +60,13 @@ async function signUp(data) {
 
 async function logout(token) {
   try {
-    var user = await new userSchema.findOne({ JWToken: token });
-    user.JWToken = "";
-    await user.save();
-  } catch (e) {}
+    await userSchema.findOneAndUpdate(
+      { JWToken: token },
+      { $set: { JWToken: "" } }
+    );
+  } catch (e) {
+    throw e;
+  }
 }
 
 async function resetPassword(qEmail, plainTextNewPassword, HashedNewPassword) {
@@ -162,14 +165,14 @@ async function verifyCode(qEmail, qCode) {
 async function verifyUserByAdmin(qEmailUser, qEmailAdmin) {
   try {
     //Fetch involved accounts
-    user = await userSchema.findOne({ email: qEmailUser });
-    admin = await userSchema.findOne({ email: qEmailAdmin });
+    let user = await userSchema.findOne({ email: qEmailUser });
+    let admin = await userSchema.findOne({ email: qEmailAdmin });
 
     //Check account types and go through with the process if things check out
     if (admin.accountType == "admin") {
       if (user.accountType == "user") {
-        user.verified == true;
-        user.save();
+        user.verified = true;
+        await user.save();
         return messages.auth.verifyUserByAdmin.success;
       } else {
         return messages.auth.verifyUserByAdmin.user_not_found;
@@ -189,4 +192,6 @@ module.exports = {
   resetPassword,
   sendVerificationCode,
   verifyCode,
+  logout,
+  verifyUserByAdmin,
 };
