@@ -159,8 +159,28 @@ async function verifyCode(qEmail, qCode) {
   }
 }
 
-async function verifyUserByAdmin(qEmail) {
-  user = userSchema.findOne({ email: qEmail });
+async function verifyUserByAdmin(qEmailUser, qEmailAdmin) {
+  try {
+    //Fetch involved accounts
+    user = await userSchema.findOne({ email: qEmailUser });
+    admin = await userSchema.findOne({ email: qEmailAdmin });
+
+    //Check account types and go through with the process if things check out
+    if (admin.accountType == "admin") {
+      if (user.accountType == "user") {
+        user.verified == true;
+        user.save();
+        return messages.auth.verifyUserByAdmin.success;
+      } else {
+        return messages.auth.verifyUserByAdmin.user_not_found;
+      }
+    } else {
+      return messages.auth.verifyUserByAdmin.unauthorized_request;
+    }
+  } catch (e) {
+    console.log(`Error in authService-verifyUserByAdmin: ${e}`);
+    throw e;
+  }
 }
 
 module.exports = {

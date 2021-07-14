@@ -24,6 +24,11 @@ messages = {
       success: "Email has been verified",
       failure: "Incorrect submission",
     },
+    verifyUserByAdmin: {
+      success: "Account had been verified ✓",
+      user_not_found: "Target account not found",
+      unauthorized_request: "403 Admin privilege required.",
+    },
   },
 };
 module.exports = { messages };

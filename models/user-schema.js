@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema(
     age: optInt,
     JWToken: String,
     isEmailVerified: { type: Boolean, default: false },
-    adminApproval: { type: Boolean, default: false },
+    verified: { type: Boolean, default: false },
     accountType: account,
     verificationCode: optInt,
   },
