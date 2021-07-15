@@ -168,7 +168,7 @@ sendVerificationEmail = async (req, res) => {
   try {
     //Validation checks
     let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    if (!req.body.email.match(regexEmail)) {
+    if (!req.user.email.match(regexEmail)) {
       return errorResponseWithOnlyMessage(
         res,
         messages.auth.validationChecks.invalid_email
