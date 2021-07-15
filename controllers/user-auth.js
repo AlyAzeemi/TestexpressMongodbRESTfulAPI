@@ -25,7 +25,8 @@ signup = async (req, res) => {
         messages.auth.validationChecks.passwords_do_not_match
       );
     }
-    if (typeof req.body.age !== Number) {
+
+    if (typeof parseInt(req.body.age) !== "number") {
       return errorResponseWithOnlyMessage(
         res,
         messages.auth.validationChecks.invalid_age
