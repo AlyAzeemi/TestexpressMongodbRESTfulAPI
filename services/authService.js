@@ -46,6 +46,7 @@ async function signUp(data) {
   try {
     var user = new userSchema(data);
     res = await userSchema.findOne({ email: user.email });
+
     if (res !== null) {
       return messages.auth.signup.already_registered;
     }
