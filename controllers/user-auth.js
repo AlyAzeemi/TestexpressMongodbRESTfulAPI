@@ -8,7 +8,6 @@ const {
   errorResponse,
 } = require("../methods/response");
 const userSchema = require("../models/user-schema");
-const { check } = require("express-validator");
 
 signup = async (req, res) => {
   try {
@@ -26,7 +25,12 @@ signup = async (req, res) => {
         messages.auth.validationChecks.passwords_do_not_match
       );
     }
-
+    if (typeof req.body.age !== Number) {
+      return errorResponseWithOnlyMessage(
+        res,
+        messages.auth.validationChecks.invalid_age
+      );
+    }
     let userFormData = {
       email: req.body.email,
       username: req.body.username,

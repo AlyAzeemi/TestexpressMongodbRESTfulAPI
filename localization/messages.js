@@ -3,6 +3,8 @@ messages = {
     validationChecks: {
       invalid_email: "Invalid email address",
       passwords_do_not_match: "Passwords don't match",
+      invalid_age:
+        "As the professional smash players like to say:'Age is just a  number B)'",
     },
     signup: {
       already_registered:
