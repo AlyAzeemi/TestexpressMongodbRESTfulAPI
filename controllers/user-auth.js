@@ -12,6 +12,21 @@ const { check } = require("express-validator");
 
 signup = async (req, res) => {
   try {
+    //Validation checks
+    let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!req.body.email.match(regexEmail)) {
+      return errorResponseWithOnlyMessage(
+        res,
+        messages.auth.validationChecks.invalid_email
+      );
+    }
+    if (req.body.password !== req.body.password2) {
+      return errorResponseWithOnlyMessage(
+        res,
+        messages.auth.validationChecks.passwords_do_not_match
+      );
+    }
+
     let userFormData = {
       email: req.body.email,
       username: req.body.username,
@@ -43,6 +58,15 @@ signup = async (req, res) => {
 
 login = async (req, res) => {
   try {
+    //Validation checks
+    let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!req.body.email.match(regexEmail)) {
+      return errorResponseWithOnlyMessage(
+        res,
+        messages.auth.validationChecks.invalid_email
+      );
+    }
+
     //Get args
     const qEmail = req.body.email;
     const qPassword = req.body.password;
@@ -95,6 +119,15 @@ logout = async (req, res) => {
 
 resetPassword = async (req, res) => {
   try {
+    //Validation checks
+    let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!req.body.email.match(regexEmail)) {
+      return errorResponseWithOnlyMessage(
+        res,
+        messages.auth.validationChecks.invalid_email
+      );
+    }
+
     //Generate new password
     var plainTextNewPassword = "";
     var characters =
@@ -133,6 +166,14 @@ resetPassword = async (req, res) => {
 
 sendVerificationEmail = async (req, res) => {
   try {
+    //Validation checks
+    let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!req.body.email.match(regexEmail)) {
+      return errorResponseWithOnlyMessage(
+        res,
+        messages.auth.validationChecks.invalid_email
+      );
+    }
     const response = await authService.sendVerificationCode(req.user.email);
     if (response == messages.auth.sendVerificationCode.success) {
       res.redirect("../verifyCode");

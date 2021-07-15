@@ -1,5 +1,9 @@
 messages = {
   auth: {
+    validationChecks: {
+      invalid_email: "Invalid email address",
+      passwords_do_not_match: "Passwords don't match",
+    },
     signup: {
       already_registered:
         "An account affiliated with this email already exists.",
