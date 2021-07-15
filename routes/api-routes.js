@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const mongoose = require("mongoose");
-const { mongoPass } = require("../secrets.json");
+const { mongoPass } = process.env.mongoPass;
 const mongoPath = `mongodb+srv://aly:${mongoPass}@cluster0.fwdpv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const auth = require("../controllers/user-auth");
 const {

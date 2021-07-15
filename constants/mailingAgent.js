@@ -1,5 +1,8 @@
 var mailClient = require("nodemailer");
-const { serviceEmailAccount } = require("../secrets.json");
+const serviceEmailAccount = {
+  email: process.env.serviceAccount_email,
+  password: process.env.serviceAccount_password,
+};
 var id = 0;
 
 var mail = mailClient.createTransport({
