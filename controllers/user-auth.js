@@ -25,12 +25,16 @@ signup = async (req, res) => {
         messages.auth.validationChecks.passwords_do_not_match
       );
     }
-    if (typeof parseInt(req.body.age) !== "number") {
-      return errorResponseWithOnlyMessage(
-        res,
-        messages.auth.validationChecks.invalid_age
-      );
+    if (req.body.age) {
+      if (req.body.age.match(/^[0-9]+$/) == null) {
+        return errorResponseWithOnlyMessage(
+          res,
+          messages.auth.validationChecks.invalid_age
+        );
+      }
     }
+
+    //UserData
     let userFormData = {
       email: req.body.email,
       username: req.body.username,
