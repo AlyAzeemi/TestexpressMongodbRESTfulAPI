@@ -41,17 +41,18 @@ signup = async (req, res) => {
       password: req.body.password,
       age: req.body.age,
     };
-
+    console.log(userFormData);
     //Hash password
     let salt = await bcrypt.genSalt(10);
     userFormData.password = await bcrypt.hash(userFormData.password, salt);
 
     //Signup
     const response = await authService.signUp(userFormData);
+    console.log(response);
     if (response == messages.auth.signup.already_registered) {
       return errorResponseWithOnlyMessage(res, response);
     }
-
+    console.log("NANI??????");
     return sendResponseOnlyWithMessage(
       res,
       true,
@@ -92,18 +93,15 @@ login = async (req, res) => {
       errorResponseWithOnlyMessage(res, response);
     } //If everything checks out
     else if (response.message == messages.auth.login.success) {
-      success = true;
-      /*
-      sendResponseOnlyWithMessage(
-        res,
-        success,
-        messages.auth.login.success,
-        200
-      );*/
       res.cookie("JWToken", response.JWToken, {
         expires: new Date(Date.now() + 60 * 15 * 1000),
       });
-      return res.redirect("../dashboard");
+      return sendResponseOnlyWithMessage(
+        res,
+        true,
+        messages.auth.login.success,
+        200
+      );
     } else {
       throw e;
     }
