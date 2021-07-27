@@ -117,8 +117,15 @@ logout = async (req, res) => {
     console.log(req.token);
     res.clearCookie("JWToken", req.token), { httpOnly: true };
     await authService.logout(req.token);
+    return sendResponseOnlyWithMessage(
+      res,
+      true,
+      "Logged out successfully",
+      200
+    );
   } catch (e) {
     console.log(`Error whilst logging out user: ${e}`);
+    errorResponseWithOnlyMessage(res, e);
   }
 };
 
