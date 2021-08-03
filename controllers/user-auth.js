@@ -115,7 +115,7 @@ logout = async (req, res) => {
   //TODO: figure out how to make this work
   try {
     console.log(req.token);
-    res.clearCookie("JWToken", req.token), { httpOnly: true };
+    await res.clearCookie("JWToken", req.token);
     await authService.logout(req.token);
     return sendResponseOnlyWithMessage(
       res,
